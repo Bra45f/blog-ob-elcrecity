@@ -10,7 +10,7 @@ body {
 
     h1, h2 {
       color: #333;
-       font-family: Proxima Nova;
+       font-family: "Montserrat", sans-serif;
     }
 
     #question {
@@ -26,12 +26,12 @@ body {
       border-left: 4px solid #4caf50;
       border-radius: 5px;
       margin-top: 5px;
-       font-family: Proxima Nova;
+       font-family: "Montserrat", sans-serif;
     }
 
     .answer b {
       color: #2c3e50;
-       font-family: Proxima Nova;
+       font-family: "Montserrat", sans-serif;
     }
 
     textarea {
@@ -43,11 +43,11 @@ body {
       border: 1px solid #ccc;
       resize: vertical;
       font-family: inherit;
-       font-family: Proxima Nova;
+       font-family: "Montserrat", sans-serif;
     }
 
 p{
-   font-family: Proxima Nova;
+   font-family: "Montserrat", sans-serif;
 }
 
     button {
@@ -58,18 +58,18 @@ p{
       border-radius: 8px;
       font-size: 16px;
       cursor: pointer;
-       font-family: Proxima Nova;
+       font-family: "Montserrat", sans-serif;
     }
 
     button:hover {
       background-color: #0174e8;
-       font-family: Proxima Nova;
+       font-family: "Montserrat", sans-serif;
     }
 
     .error {
       color: red;
       margin-top: 10px;
-       font-family: Proxima Nova;
+       font-family: "Montserrat", sans-serif;
     }
    footer{
    display: flex;
@@ -91,7 +91,7 @@ p{
   color: #000000;
   display: block;
   padding: 5px 15px;
-  font-family: Proxima Nova;
+  font-family: "Montserrat", sans-serif;
   text-decoration: none;
 }
 

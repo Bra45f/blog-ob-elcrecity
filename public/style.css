@@ -41,7 +41,7 @@
   font-size: 25px;
   line-height: 1.6;
   text-align: center;
-  font-family: Proxima Nova;
+  font-family: "Montserrat", sans-serif;
 }
 
 
@@ -66,7 +66,7 @@
     color: #fff;
     display: block;
     padding: 5px 15px;
-    font-family: Proxima Nova;
+    font-family: "Montserrat", sans-serif;
     text-decoration: none;
   }
   .list-menu > li > a:hover{
@@ -135,26 +135,26 @@
   margin-top: 25px;
   margin-bottom: 15px;
   text-align: center;
-  font-family: Proxima Nova;
+  font-family: "Montserrat", sans-serif;
  }
  
  .h2text {
   text-align: center;
   margin-top: 30px;
   margin-bottom: 20px;
-  font-family: Proxima Nova;
+  font-family: "Montserrat", sans-serif;
  }
 
 .text-block{
   text-align: center;
   margin-top: 30px;
   margin-bottom: 20px;
-  font-family: Proxima Nova;
+  font-family: "Montserrat", sans-serif;
 }
 
  h2{
   
-  font-family: Proxima Nova;
+  font-family: "Montserrat", sans-serif;
  }
 
  .new_blogs{
@@ -162,7 +162,7 @@
   margin-top: 25px;
   margin-bottom: 15px;
   text-align: center;
-  font-family: Proxima Nova;
+  font-family: "Montserrat", sans-serif;
 
  }
 
@@ -292,20 +292,20 @@
   color: #333;
   margin-top: 0;
   margin-bottom: 10px;
-  font-family: Proxima Nova;
+  font-family: "Montserrat", sans-serif;
 }
 
 .blog-description {
   color: #666;
   margin-bottom: 15px;
-  font-family: Proxima Nova;
+  font-family: "Montserrat", sans-serif;
 }
 
 .blog-link {
   display: inline-block;
   color: #0066cc;
   font-weight: bold;
-  font-family: Proxima Nova;
+  font-family: "Montserrat", sans-serif;
   text-decoration: none;
 }
 
@@ -332,7 +332,7 @@
       margin: 10px;
       margin-left: 30px;
       font-size: 22px;
-       font-family: Proxima Nova;
+       font-family: "Montserrat", sans-serif;
   }
   .hidden-text {
       display: block;
@@ -343,7 +343,7 @@
       margin-left: 30px;
       margin-bottom: 10px;
       font-size: 18px;
-       font-family: Proxima Nova;
+       font-family: "Montserrat", sans-serif;
   }
   input {
       position: absolute;
@@ -396,7 +396,7 @@ footer{
   color: #fff;
   display: block;
   padding: 5px 15px;
-  font-family: Proxima Nova;
+  font-family: "Montserrat", sans-serif;
   text-decoration: none;
 }
 

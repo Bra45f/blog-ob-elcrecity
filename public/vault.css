@@ -17,7 +17,7 @@
     color: #fff;
     display: block;
     padding: 5px 15px;
-    font-family: Proxima Nova;
+    font-family: "Montserrat", sans-serif;
     text-decoration: none;
   }
   .list-menu > li > a:hover{
@@ -67,14 +67,14 @@ input{
       margin: 10px 0;
       border-radius: 5px;
       border: 1px solid #ccc;
-      font-family: Proxima Nova;
+      font-family: "Montserrat", sans-serif;
 }
 
 h1{
   text-align: center;
   margin-top: 15px;
   margin-bottom: 15px;
-  font-family: Proxima Nova;
+  font-family: "Montserrat", sans-serif;
 }
 
 button{
@@ -85,13 +85,13 @@ button{
       font-size: 16px;
       border-radius: 5px;
       cursor: pointer;
-      font-family: Proxima Nova;
+      font-family: "Montserrat", sans-serif;
       
 }
 
 .admin-list{
   padding: 5px 15px;
-      font-family: Proxima Nova;
+      font-family: "Montserrat", sans-serif;
       
 }
 
@@ -103,14 +103,14 @@ button{
       font-size: 16px;
       border-radius: 5px;
       cursor: pointer;
-      font-family: Proxima Nova;
+      font-family: "Montserrat", sans-serif;
   background-color: rgb(190, 76, 74);
   color: #000; 
 }
 
 p{
   margin: 5px;
-  font-family: Proxima Nova;
+  font-family: "Montserrat", sans-serif;
 }
 a{
   text-decoration: none;
@@ -124,7 +124,7 @@ a:hover{
   margin-top: 15px;
   margin-bottom: 15px;
   font-size: 25px;
-  font-family: Proxima Nova;
+  font-family: "Montserrat", sans-serif;
 }
 
 @media (max-width: 767px){
@@ -141,7 +141,7 @@ a:hover{
       margin: 10px;
       margin-left: 30px;
       font-size: 22px;
-      font-family: Proxima Nova;
+      font-family: "Montserrat", sans-serif;
   }
   .hidden-text {
       display: block;
@@ -152,7 +152,7 @@ a:hover{
       margin-left: 30px;
       margin-bottom: 10px;
       font-size: 18px;
-      font-family: Proxima Nova;
+      font-family: "Montserrat", sans-serif;
   }
   input {
       position: absolute;
@@ -221,7 +221,7 @@ footer{
   color: #fff;
   display: block;
   padding: 5px 15px;
-  font-family: Proxima Nova;
+  font-family: "Montserrat", sans-serif;
   text-decoration: none;
 }
 

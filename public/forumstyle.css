@@ -17,7 +17,7 @@
     color: #fff;
     display: block;
     padding: 5px 15px;
-    font-family: Proxima Nova;
+    font-family: "Montserrat", sans-serif;
     text-decoration: none;
   }
   .list-menu > li > a:hover{
@@ -67,14 +67,14 @@
       text-align: center;
       margin-top: 20px;
       margin-bottom: 10px;
-      font-family: Proxima Nova;
+      font-family: "Montserrat", sans-serif;
     }
 
     h2{
       text-align: center;
       margin-top: 20px;
       margin-bottom: 10px;
-      font-family: Proxima Nova;
+      font-family: "Montserrat", sans-serif;
     }
 
     form {
@@ -96,7 +96,7 @@
       margin: 10px 0;
       border-radius: 5px;
       border: 1px solid #ccc;
-      font-family: Proxima Nova;
+      font-family: "Montserrat", sans-serif;
     }
 
     form input[type="file"] {
@@ -111,7 +111,7 @@
       font-size: 16px;
       border-radius: 5px;
       cursor: pointer;
-      font-family: Proxima Nova;
+      font-family: "Montserrat", sans-serif;
     }
 
     form button:hover {
@@ -140,13 +140,13 @@
 }
     .question-card h3 {
       margin-top: 0;
-      font-family: Proxima Nova;
+      font-family: "Montserrat", sans-serif;
     }
 
     .question-card a {
       text-decoration: none;
       color: #333;
-      font-family: Proxima Nova;
+      font-family: "Montserrat", sans-serif;
     }
 
     .question-card a:hover {
@@ -175,7 +175,7 @@ footer{
   color: #fff;
   display: block;
   padding: 5px 15px;
-  font-family: Proxima Nova;
+  font-family: "Montserrat", sans-serif;
   text-decoration: none;
 }
 

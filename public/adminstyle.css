@@ -17,7 +17,7 @@
     color: #fff;
     display: block;
     padding: 5px 15px;
-    font-family: Proxima Nova;
+    font-family: "Montserrat", sans-serif;
     text-decoration: none;
   }
   .list-menu > li > a:hover{
@@ -105,7 +105,7 @@
   margin-top: 15px;
   margin-bottom: 15px;
   font-size: 25px;
-  font-family: Proxima Nova;
+  font-family: "Montserrat", sans-serif;
 }
 
   .admin-btn {
@@ -159,7 +159,7 @@ footer{
   color: #fff;
   display: block;
   padding: 5px 15px;
-  font-family: Proxima Nova;
+  font-family: "Montserrat", sans-serif;
   text-decoration: none;
 }
 
@@ -193,20 +193,20 @@ footer{
     margin-bottom: 18px;
     font-weight: 600;
     margin-left: 30px;
-     font-family: Proxima Nova;
+     font-family: "Montserrat", sans-serif;
   }
 p{
-    font-family: Proxima Nova;
+    font-family: "Montserrat", sans-serif;
 }
 h3{
     margin-left: 30px;
     margin-bottom: 10px;
-    font-family: Proxima Nova;
+    font-family: "Montserrat", sans-serif;
 }
 h4{
     margin-top:10px ;
     margin-bottom: 10px;
-    font-family: Proxima Nova;
+    font-family: "Montserrat", sans-serif;
 }
 
 .fff{
@@ -222,7 +222,7 @@ h4{
   h2{
     margin-top: 18px;
     margin-left: 30px;
-    font-family: Proxima Nova;
+    font-family: "Montserrat", sans-serif;
   }
   
   input, textarea {
@@ -235,7 +235,7 @@ h4{
     transition: border-color 0.3s ease;
     font-family: inherit;
     margin-left: 30px;
-    font-family: Proxima Nova;
+    font-family: "Montserrat", sans-serif;
   }
   input:focus, textarea:focus {
     border-color: #555;
@@ -252,7 +252,7 @@ h4{
     cursor: pointer;
     transition: background-color 0.3s ease;
     margin-left: 30px;
-    font-family: Proxima Nova;
+    font-family: "Montserrat", sans-serif;
   }
   button:hover {
     background: #222;
