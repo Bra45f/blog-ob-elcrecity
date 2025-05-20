@@ -4,8 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Вход на админ-панель</title>
+    <link rel="stylesheet" href="vault.css">
 </head>
 <body>
+  <nav>
+        <input type="checkbox" id="btn-menu" />
+        <label for="btn-menu"></label>
+        <ul class="list-menu">
+          <li><a href="index.html">На главную</a></li>
+        </ul>
+      </nav>
+      <div class="form">
   <h1>Вход</h1>
     <form id="loginForm">
         <input type="text" name="username" placeholder="Логин" required />
@@ -13,7 +22,17 @@
         <input type="text" name="secret_key" placeholder="Секретный ключ" required />
         <button type="submit">Войти</button>
       </form>
-      
+      </div>
+      <footer>
+  <nav>
+    <ul class="footer-menu">
+      <li><a href="index.html">Главная</a></li>
+      <li><a href="bloglist.html">Блоги</a></li>
+      <li><a href="forum.html">Форум</a></li>
+      <li><a href="#faq">ЧАВо</a></li>
+    </ul>
+  </nav>
+</footer>
       <script>
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
           e.preventDefault();

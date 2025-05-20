@@ -4,52 +4,92 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Регистрация админа</title>
+    <link rel="stylesheet" href="vault.css">
 </head>
 <body>
+  <div class="form">
   <h1>Регистрация нового администратора</h1>
     <form id="registerForm">
         <input type="email" name="email" placeholder="Email" required />
         <input type="text" name="username" placeholder="Логин" required />
-        <input type="password" name="password" placeholder="Пароль" required />
-        <button type="submit">Зарегистрироваться</button>
+        <input type="password" id="password" name="password" placeholder="Пароль" required /><button class="arc" type="button" id="togglePassword">Показать</button>
+        <button class="arc" type="submit">Зарегистрировать</button>
       </form>
   <h1>Список зарегистрированных администраторов</h1>
-  <ul id="admin-list"></ul>
+  <ul class="admin-list" id="admin-list"></ul></div>
 
       <script>
-        document.getElementById('registerForm').addEventListener('submit', async (e) => {
-          e.preventDefault();
-          const formData = new FormData(e.target);
-          const response = await fetch('/api/admin/register', {
-            method: 'POST',
-            body: new URLSearchParams(formData)
-          });
-          const result = await response.json();
-          alert(result.message);
-        });
-
-        async function loadAdmins() {
-      const res = await fetch('/api/admin/list');
-      const admins = await res.json();
-      const list = document.getElementById('admin-list');
-      list.innerHTML = '';
-      admins.forEach(admin => {
-        const li = document.createElement('li');
-        li.textContent = `Логин: ${admin.username}, Email: ${admin.email}` ;
-        const delBtn = document.createElement('button');
-        delBtn.textContent = 'Удалить';
-        delBtn.onclick = async () => {
-          if (confirm(`Удалить администратора ${admin.username}?`)) {
-            await fetch(`/api/admin/${admin.id}`, { method: 'DELETE' });
-            loadAdmins();
-          }
-        };
-        li.appendChild(delBtn);
-        list.appendChild(li);
-      });
-    }
+document.getElementById('togglePassword').addEventListener('click', () => {
+  const passwordField = document.getElementById('password');
+  const toggleButton = document.getElementById('togglePassword');
   
-    window.addEventListener('DOMContentLoaded', loadAdmins);
+  if (passwordField.type === 'password') {
+    passwordField.type = 'text';
+    toggleButton.textContent = 'Скрыть';
+  } else {
+    passwordField.type = 'password';
+    toggleButton.textContent = 'Показать';
+  }
+});
+        
+        function validatePassword(password) {
+    const minLength = 8;
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/;
+
+    if (password.length < minLength) {
+      return 'Пароль должен содержать минимум 8 символов.';
+    }
+    if (!regex.test(password)) {
+      return 'Пароль должен содержать заглавную, строчную букву, цифру и спецсимвол.';
+    }
+    return null; // Всё ок
+  }
+
+  document.getElementById('registerForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const password = formData.get('password');
+    
+    const error = validatePassword(password);
+    if (error) {
+      alert(error);
+      return;
+    }
+
+    const response = await fetch('/api/admin/register', {
+      method: 'POST',
+      body: new URLSearchParams(formData)
+    });
+    const result = await response.json();
+    alert(result.message);
+    if (response.ok) {
+      e.target.reset(); // Очистить форму
+      loadAdmins();     // Обновить список админов
+    }
+  });
+
+  async function loadAdmins() {
+    const res = await fetch('/api/admin/list');
+    const admins = await res.json();
+    const list = document.getElementById('admin-list');
+    list.innerHTML = '';
+    admins.forEach(admin => {
+      const li = document.createElement('li');
+      li.textContent = `Логин: ${admin.username}, Email: ${admin.email}` ;
+      const delBtn = document.createElement('button');
+      delBtn.textContent = 'Удалить';
+      delBtn.onclick = async () => {
+        if (confirm(`Удалить администратора ${admin.username}?`)) {
+          await fetch(`/api/admin/${admin.id}`, { method: 'DELETE' });
+          loadAdmins();
+        }
+      };
+      li.appendChild(delBtn);
+      list.appendChild(li);
+    });
+  }
+
+  window.addEventListener('DOMContentLoaded', loadAdmins);
       </script>
       
 </body>

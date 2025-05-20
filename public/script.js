@@ -1,111 +1,107 @@
 const blogId = new URLSearchParams(window.location.search).get('id');
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     if (!blogId) {
         console.error("blogId не найден в URL");
         return;
     }
-    fetchAverageRating();
-    loadComments();
-    loadUserRating();
+    
+
+    await fetchAverageRating();
+    await loadComments();
+    await loadUserRating();
 });
 
-// Проверка логина
+// Универсальный fetch с обработкой ошибок
+const fetchJSON = async (url, options = {}) => {
+    try {
+        const res = await fetch(url, options);
+        if (!res.ok) throw new Error(await res.text());
+        return await res.json();
+    } catch (err) {
+        console.error(`Ошибка запроса к ${url}:`, err);
+        throw err;
+    }
+};
+
 const checkLogin = async () => {
-    const res = await fetch('/api/session');
-    const data = await res.json();
+    const data = await fetchJSON('/api/session');
     return data.loggedIn;
 };
 
-// Переключение звёздочек
-function change(id) {
+function updateStars(rating) {
     const stars = document.getElementsByClassName('rating-star');
-    const rating = document.getElementById(id + '_hidden').value;
-    
     for (let i = 0; i < stars.length; i++) {
-        if (i < rating) {
-            stars[i].src = 'IMG-TEST/fi-sr-star2.png';
-        } else {
-            stars[i].src = 'IMG-TEST/fi-rr-star.png';
-        }
+        stars[i].src = i < rating ? 'IMG-TEST/fi-sr-star2.png' : 'IMG-TEST/fi-rr-star.png';
     }
-    
     document.getElementById('ratingValue').value = rating;
 }
 
-// Отправка комментария
+function change(id) {
+    const rating = document.getElementById(`${id}_hidden`).value;
+    updateStars(rating);
+}
+
 async function sendComment() {
-    const isLoggedIn = await checkLogin();
-    if (!isLoggedIn) {
+    if (!await checkLogin()) {
         alert('Пожалуйста, войдите в аккаунт, чтобы оставить комментарий.');
         window.location.href = "/login.html";
         return;
     }
 
-    const comment = document.getElementById('comment').value;
-    if (!comment.trim()) {
+    const comment = document.getElementById('comment').value.trim();
+    if (!comment) {
         alert('Комментарий не может быть пустым.');
         return;
     }
 
     try {
-        await fetch(`/api/blogs/${blogId}/comments`, {
+        await fetchJSON(`/api/blogs/${blogId}/comments`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ text: comment })
         });
-
         document.getElementById('comment').value = '';
         await loadComments();
-    } catch (error) {
-        console.error('Ошибка при отправке комментария:', error);
+    } catch {
         alert('Ошибка при отправке комментария.');
     }
 }
 
-// Загрузка комментариев
 async function loadComments() {
     try {
-        const res = await fetch(`/api/blogs/${blogId}/comments`);
-        const comments = await res.json();
+        const comments = await fetchJSON(`/api/blogs/${blogId}/comments`);
         const container = document.getElementById('comments');
-
-        // Очистка контейнера перед вставкой новых комментариев
         container.innerHTML = '';
 
-        comments.forEach(c => {
+        comments.forEach(({ username, text }) => {
             const p = document.createElement('p');
-
             const b = document.createElement('b');
-            b.textContent = `${c.username}: `;
+            b.textContent = `${username}: `;
             p.appendChild(b);
+            p.appendChild(document.createTextNode(text));
 
-            const text = document.createTextNode(c.text);
-            p.appendChild(text);
-
+          
             container.appendChild(p);
+            
         });
-
-    } catch (error) {
-        console.error('Ошибка при загрузке комментариев:', error);
+    } catch {
+        // Ошибка уже залогирована в fetchJSON
     }
 }
-// Получение среднего рейтинга
+
 async function fetchAverageRating() {
     try {
-        const response = await fetch(`/api/blogs/${blogId}/average_rating`);
-        const data = await response.json();
-        const average = data.average_rating !== null ? parseFloat(data.average_rating).toFixed(1) : "0.0";
-        document.getElementById('averageRating').innerText = average;
-    } catch (error) {
-        console.error('Ошибка загрузки среднего рейтинга:', error);
+        const { average_rating } = await fetchJSON(`/api/blogs/${blogId}/average_rating`);
+        document.getElementById('averageRating').innerText =
+            average_rating !== null ? parseFloat(average_rating).toFixed(1) : "0.0";
+    } catch {
+        // Ошибка уже залогирована в fetchJSON
     }
 }
 
-// Сохранение оценки
 async function saveRating() {
-    const isLoggedIn = await checkLogin();
-    if (!isLoggedIn) {
+    if (!await checkLogin()) {
         alert('Пожалуйста, войдите в аккаунт, чтобы оценить блог.');
         window.location.href = "/login.html";
         return;
@@ -118,66 +114,53 @@ async function saveRating() {
     }
 
     try {
-        await fetch(`/api/blogs/${blogId}/ratings`, {
+        await fetchJSON(`/api/blogs/${blogId}/ratings`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ rating })
         });
 
         alert('Спасибо за вашу оценку!');
-        await fetchAverageRating(); // Перезагрузим средний рейтинг без перезагрузки страницы
-    } catch (error) {
-        console.error('Ошибка при сохранении рейтинга:', error);
+        await fetchAverageRating();
+    } catch {
         alert('Ошибка при сохранении рейтинга.');
     }
 }
 
-// Функция изменения оценки
 async function loadUserRating() {
-    const res = await fetch(`/api/blogs/${blogId}/user_rating`);
-    const data = await res.json();
+    try {
+        const { rating } = await fetchJSON(`/api/blogs/${blogId}/user_rating`);
 
-    if (data.rating !== null) {
-        document.getElementById('ratingValue').value = data.rating;
-
-        // Обновляем отображение звёзд
-        const stars = document.getElementsByClassName('rating-star');
-        for (let i = 0; i < stars.length; i++) {
-            if (i < data.rating) {
-                stars[i].src = 'IMG-TEST/fi-sr-star2.png';
-            } else {
-                stars[i].src = 'IMG-TEST/fi-rr-star.png';
-            }
+        if (rating !== null) {
+            updateStars(rating);
+            document.getElementById('ratingButton').innerText = 'Изменить оценку';
+            document.getElementById('deleteRatingButton').style.display = 'inline-block';
+        } else {
+            document.getElementById('ratingButton').innerText = 'Оценить';
+            document.getElementById('deleteRatingButton').style.display = 'none';
         }
-
-        document.getElementById('ratingButton').innerText = 'Изменить оценку';
-        document.getElementById('deleteRatingButton').style.display = 'inline-block';
-    } else {
-        document.getElementById('ratingButton').innerText = 'Оценить';
-        document.getElementById('deleteRatingButton').style.display = 'none';
+    } catch {
+        // Ошибка уже залогирована в fetchJSON
     }
 }
 
-// удаление оценки
 async function deleteRating() {
-    const res = await fetch(`/api/session`);
-    const session = await res.json();
-    if (!session.loggedIn) {
+    if (!await checkLogin()) {
         alert('Войдите, чтобы удалить оценку');
         return;
     }
-  
+
     try {
         await fetch(`/api/blogs/${blogId}/ratings`, {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' }
         });
-  
+
         alert('Оценка удалена');
         document.getElementById('ratingValue').value = '';
-        fetchAverageRating();
-        loadUserRating();
+        await fetchAverageRating();
+        await loadUserRating();
     } catch (error) {
         console.error('Ошибка при удалении оценки:', error);
     }
-  }
+}

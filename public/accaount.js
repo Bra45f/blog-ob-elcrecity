@@ -5,7 +5,7 @@ async function checkSession() {
         window.location.href = '/login';
         return;
     }
-    document.getElementById('welcome').innerText = `Привет, ${data.user.username}`;
+    document.getElementById('welcome').innerText = `Привет, ${data.username}`;
 }
 
 async function logout() {

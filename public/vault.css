@@ -17,9 +17,13 @@
     color: #fff;
     display: block;
     padding: 5px 15px;
+    font-family: Proxima Nova;
+    text-decoration: none;
   }
   .list-menu > li > a:hover{
-    background: #000;
+    background: #000000;
+    border-radius: 10px;
+
   }
   
   #btn-menu{
@@ -58,34 +62,69 @@
   }
 
 input{
-  width: 500px;
-  height: 25px;
-  margin: 5px;
-  border-radius: 0px;
+  width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-family: Proxima Nova;
 }
 
-h2{
-  margin: 5px;
+h1{
+  text-align: center;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  font-family: Proxima Nova;
 }
 
 button{
-  width: 150px;
-  height: 20px;
-  margin: 5px;
-  background-color: rgb(74, 190, 74);
-  color: #000;
+  background-color: #4caf50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-family: Proxima Nova;
+      
+}
+
+.admin-list{
+  padding: 5px 15px;
+      font-family: Proxima Nova;
+      
 }
 
 .logoutbtm{
-  width: 150px;
-  height: 20px;
-  margin: 5px;
+  display: block;
+  margin: 0 auto;
+  padding: 10px 20px;
+      border: none;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-family: Proxima Nova;
   background-color: rgb(190, 76, 74);
   color: #000; 
 }
 
 p{
   margin: 5px;
+  font-family: Proxima Nova;
+}
+a{
+  text-decoration: none;
+}
+a:hover{
+  color: #4caf50;
+}
+
+.welcome{
+  text-align: center;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  font-size: 25px;
+  font-family: Proxima Nova;
 }
 
 @media (max-width: 767px){
@@ -102,6 +141,7 @@ p{
       margin: 10px;
       margin-left: 30px;
       font-size: 22px;
+      font-family: Proxima Nova;
   }
   .hidden-text {
       display: block;
@@ -112,6 +152,7 @@ p{
       margin-left: 30px;
       margin-bottom: 10px;
       font-size: 18px;
+      font-family: Proxima Nova;
   }
   input {
       position: absolute;
@@ -122,6 +163,18 @@ p{
       max-height: none;
       opacity: 1;
   }    
+}
+
+.form{
+  background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 30px;
 }
 
 .hint {
@@ -151,7 +204,7 @@ footer{
   left: 0;
   bottom: 0;
   /* Добавим цвет и ширину блока для наглядности*/
-  background-color: #444;
+  background-color: #222;
   width: 100%;
    
 }
@@ -161,11 +214,18 @@ footer{
     list-style: none;
     color: #fff;
     padding: 5px 15px;
+    
 }
 
 .footer-menu > li > a{
   color: #fff;
   display: block;
   padding: 5px 15px;
+  font-family: Proxima Nova;
+  text-decoration: none;
 }
 
+.footer-menu > li > a:hover{
+  background: #000;
+  border-radius: 10px;
+}

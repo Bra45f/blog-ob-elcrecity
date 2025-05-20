@@ -1,0 +1,101 @@
+body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 0px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+
+    h1, h2 {
+      color: #333;
+       font-family: Proxima Nova;
+    }
+
+    #question {
+      padding-bottom: 20px;
+      border-bottom: 1px solid #ccc;
+      margin-bottom: 20px;
+    }
+
+    .answer {
+      background: #fff;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-left: 4px solid #4caf50;
+      border-radius: 5px;
+      margin-top: 5px;
+       font-family: Proxima Nova;
+    }
+
+    .answer b {
+      color: #2c3e50;
+       font-family: Proxima Nova;
+    }
+
+    textarea {
+      width: 780px;
+      height: 100px;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      resize: vertical;
+      font-family: inherit;
+       font-family: Proxima Nova;
+    }
+
+p{
+   font-family: Proxima Nova;
+}
+
+    button {
+      padding: 10px 20px;
+      background-color: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+       font-family: Proxima Nova;
+    }
+
+    button:hover {
+      background-color: #0174e8;
+       font-family: Proxima Nova;
+    }
+
+    .error {
+      color: red;
+      margin-top: 10px;
+       font-family: Proxima Nova;
+    }
+   footer{
+   display: flex;
+    list-style: none;
+  /* Добавим цвет и ширину блока для наглядности*/
+  background-color: #f9f9f9;
+  width: 100%;
+   
+}
+
+.footer-menu {
+  display: flex;
+    list-style: none;
+    color: #f9f9f9;
+    padding: 5px 15px;
+}
+
+.footer-menu > li > a{
+  color: #000000;
+  display: block;
+  padding: 5px 15px;
+  font-family: Proxima Nova;
+  text-decoration: none;
+}
+
+.footer-menu > li > a:hover{
+  background: #d4d4d4;
+  border-radius: 10px;
+}   

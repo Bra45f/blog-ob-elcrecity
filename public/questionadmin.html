@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 0px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+
+    h1, h2 {
+      color: #333;
+    }
+
+    #question {
+      padding-bottom: 20px;
+      border-bottom: 1px solid #ccc;
+      margin-bottom: 20px;
+    }
+
+    .answer {
+      background: #fff;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-left: 4px solid #4caf50;
+      border-radius: 5px;
+      margin-top: 5px;
+    }
+
+    .answer b {
+      color: #2c3e50;
+    }
+
+    form textarea {
+      width: 780px;
+      height: 100px;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      resize: vertical;
+      font-family: inherit;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #52bc57;
+    }
+
+    .error {
+      color: red;
+      margin-top: 10px;
+    }
+footer{
+   display: flex;
+    list-style: none;
+  /* Добавим цвет и ширину блока для наглядности*/
+  background-color: #f9f9f9;
+  width: 100%;
+   
+}
+
+.footer-menu {
+  display: flex;
+    list-style: none;
+    color: #f9f9f9;
+    padding: 5px 15px;
+}
+
+.footer-menu > li > a{
+  color: #000000;
+  display: block;
+  padding: 5px 15px;
+  font-family: Proxima Nova;
+  text-decoration: none;
+}
+
+.footer-menu > li > a:hover{
+  background: #d4d4d4;
+  border-radius: 10px;
+}
+  </style>
+</head>
+<body>
+    <a href="forumadmin.html"><button>Назад</button></a> <button id="deleteBtn" style="display:none; background:#e74c3c; ">Удалить вопрос</button>
+    <div id="question"></div>
+   
+
+
+<hr>
+<div id="answers"></div>
+ <footer>
+      <nav>
+        <ul class="footer-menu">
+          <li><a href="index.html">Вернуться на сайт</a></li>
+        <li><a href="bloglistadmin.html">Добавленные блоги</a></li>
+     <li><a href="forumadmin.html">Форум</a></li>
+     <li><a href="admin.html">Админ-панель</a></li>
+        </ul>
+      </nav>
+    </footer>
+<script>
+const urlParams = new URLSearchParams(window.location.search);
+const id = urlParams.get('id');
+
+let currentUser;
+
+async function loadPage() {
+  currentUser = await fetch('/api/admin/session')
+    .then(res => res.ok ? res.json() : null);
+  console.log('Current user:', currentUser); // для отладки
+
+  const res = await fetch(`/api/forum/questions/${id}`);
+  const data = await res.json();
+
+  const q = data.question;
+  let html = `<h2>${q.title}</h2><p>${q.description}</p>`;
+  if (q.imageUrl) html += `<img src="${q.imageUrl}" style="max-width:100%;">`;
+  document.getElementById('question').innerHTML = html;
+
+  if (currentUser && (currentUser.id === q.user_id || currentUser.isAdmin)) {
+    document.getElementById('deleteBtn').style.display = 'inline-block';
+  }
+
+  const answersHTML = data.answers.map(a => {
+    const canDelete = currentUser && currentUser.isAdmin;
+    return `<div class="answer" data-answer-id="${a.id}">
+              <b>${a.username}</b>: ${a.answer}
+              ${canDelete ? `<button class="deleteAnswerBtn" data-id="${a.id}">Удалить</button>` : ''}
+            </div>`;
+  }).join('');
+
+  document.getElementById('answers').innerHTML = answersHTML;
+
+  document.querySelectorAll('.deleteAnswerBtn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      const answerId = e.target.dataset.id;
+      if (!confirm('Удалить этот ответ?')) return;
+
+      try {
+        const res = await fetch(`/api/admin/forum/answers/${answerId}`, {
+          method: 'DELETE',
+          credentials: 'include'
+        });
+        if (res.ok) {
+          alert('Ответ удалён');
+          e.target.parentElement.remove();
+        } else {
+          alert('Ошибка удаления ответа');
+        }
+      } catch (err) {
+        console.error('Ошибка при удалении ответа:', err);
+        alert('Ошибка при удалении ответа');
+      }
+    });
+  });
+}
+
+loadPage();
+
+
+
+// Удаление вопроса
+document.getElementById('deleteBtn').addEventListener('click', async () => {
+  if (confirm('Вы точно хотите удалить этот вопрос?')) {
+    const res = await fetch(`/api/forum/questions/${id}`, {
+  method: 'DELETE',
+  credentials: 'include'
+});
+
+if (res.ok) {
+  const data = await res.json();
+  console.log(data.message);
+  alert("Вопрос удалён");
+  window.location.href = 'forumadmin.html';
+} else {
+  alert("Ошибка удаления");
+}
+  }
+});
+if (currentUser && currentUser.isAdmin) {
+    const deleteBtn = document.createElement('button');
+    deleteBtn.textContent = 'Удалить';
+    deleteBtn.addEventListener('click', () => {
+        if (confirm('Удалить комментарий?')) {
+            fetch(`/api/admin/forum/comments/${comment.id}`, {
+                method: 'DELETE'
+            }).then(res => {
+                if (res.ok) {
+                    commentElement.remove();
+                } else {
+                    alert('Ошибка при удалении комментария');
+                }
+            });
+        }
+    });
+    commentElement.appendChild(deleteBtn);
+}
+
+
+</script>
+
+</body>
+</html>

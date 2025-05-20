@@ -1,5 +1,5 @@
 async function checkSession() {
-    const res = await fetch('/api/session');
+    const res = await fetch('/api/session' , { credentials: 'include' });
     const data = await res.json();
     if (!data.loggedIn) {
         window.location.href = '/login';

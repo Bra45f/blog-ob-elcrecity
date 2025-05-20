@@ -42,15 +42,15 @@ let editingId = null;
         div.className = 'blog-card';
         div.innerHTML = `
         <p><b>Дата создания:</b> ${formattedDate}</p>
-          <h3 style="color: #333;
+          <h4 style="color: #333;
     margin-top: 0;
-    margin-bottom: 10px;">${blog.title}</h3>
+    margin-bottom: 10px;">${blog.title}</h4>
           <p style="color: #666;
     margin-bottom: 15px;"><b>Описание:</b> ${blog.description || ''}</p>
     <p><b>Автор:</b> ${blog.author || 'неизвестен'}</p>
-          <button class="admin-btn open-btn" onclick="openBlog(${blog.id})">Открыть</button>
-          <button class="admin-btn open-btn" onclick="openEdit(${blog.id}, \`${blog.title}\`, \`${blog.description || ''}\`, \`${blog.content.replace(/`/g, '\\`')}\`)">Изменить</button>
-          <button class="admin-btn open-btn" onclick="deleteBlog(${blog.id})">Удалить</button>
+          <button class="fff" onclick="openBlog(${blog.id})">Открыть</button>
+          <a href="#editModal"><button class="fff" onclick="openEdit(${blog.id}, \`${blog.title}\`, \`${blog.description || ''}\`, \`${blog.content.replace(/`/g, '\\`')}\`)">Изменить</button></a>
+          <button class="fff" onclick="deleteBlog(${blog.id})">Удалить</button>
         `;
         container.appendChild(div);
       });

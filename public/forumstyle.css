@@ -1,0 +1,185 @@
+/* стиль меню навигации */
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+  }
+  
+  nav{
+    background: #222;  
+    padding: 15px;
+  }
+  .list-menu{
+    display: flex;
+    list-style: none;
+  }
+  .list-menu > li > a{
+    color: #fff;
+    display: block;
+    padding: 5px 15px;
+    font-family: Proxima Nova;
+    text-decoration: none;
+  }
+  .list-menu > li > a:hover{
+    background: #000;
+    border-radius: 10px;
+
+  }
+  
+  #btn-menu{
+    display: none;
+  }
+  #btn-menu + label{
+    display: none; 
+    position: relative;
+    color: #fff; 
+    height: 20px;
+    z-index: 1;
+    cursor: pointer;
+  }
+  #btn-menu + label:before{
+    content: '=';  
+    display: inline-block;
+    font-family:'FontAwesome';
+    font-size: 22px;
+  }
+  #btn-menu:checked + label:before{
+    content: 'x';
+    color: #f00;
+  }
+  
+  @media screen and (max-width: 767px) {
+   
+     #btn-menu + label{
+        display: inline-block;
+     }
+    #btn-menu + label + .list-menu{
+      display: none;
+    }
+    #btn-menu:checked + label + .list-menu{
+      display: block;
+    }
+  }
+
+
+  
+    h1 {
+      text-align: center;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      font-family: Proxima Nova;
+    }
+
+    h2{
+      text-align: center;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      font-family: Proxima Nova;
+    }
+
+    form {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 30px;
+    }
+
+    form input[type="text"],
+    form textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-family: Proxima Nova;
+    }
+
+    form input[type="file"] {
+      margin: 10px 0;
+    }
+
+    form button {
+      background-color: #4caf50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-family: Proxima Nova;
+    }
+
+    form button:hover {
+      background-color: #45a049;
+    }
+
+    #questions {
+      display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    }
+
+    .question-card {
+      background: #fff;
+  margin-bottom: 20px;
+  border-left: 10px solid #2ac51c;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;  
+    }
+.question-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+    .question-card h3 {
+      margin-top: 0;
+      font-family: Proxima Nova;
+    }
+
+    .question-card a {
+      text-decoration: none;
+      color: #333;
+      font-family: Proxima Nova;
+    }
+
+    .question-card a:hover {
+      text-decoration: underline;
+    }
+
+footer{
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  /* Добавим цвет и ширину блока для наглядности*/
+  background-color: #444;
+  width: 100%;
+   
+}
+
+.footer-menu {
+  display: flex;
+    list-style: none;
+    color: #fff;
+    padding: 5px 15px;
+    
+}
+
+.footer-menu > li > a{
+  color: #fff;
+  display: block;
+  padding: 5px 15px;
+  font-family: Proxima Nova;
+  text-decoration: none;
+}
+
+.footer-menu > li > a:hover{
+  background: #000;
+  border-radius: 10px;
+}

@@ -11,36 +11,82 @@
   <footer>
     <nav>
       <ul class="footer-menu">
-        <li><a href="#">Главная</a></li>
-        <li><a href="bloglist.html">Блоги</a></li>
-        <li><a href="#faq">ЧАВо</a></li>
-        <li><a href="/admin">Для администраторов</a></li>
+        <li><a href="index.html">Вернуться на сайт</a></li>
+        <li><a href="bloglistadmin.html">Добавленные блоги</a></li>
+     <li><a href="forumadmin.html">Форум</a></li>
+     <li><a href="admin.html">Админ-панель</a></li>
       </ul>
     </nav>
   </footer>
   <script>
     async function loadBlog() {
-    const id = new URLSearchParams(window.location.search).get('id');
-    const res = await fetch(`/api/blogs/${id}`);
-    const blog = await res.json();
-   const date = new Date(blog.created_at);
-        const formattedDate = date.toLocaleDateString('ru-RU', {
+  const id = new URLSearchParams(window.location.search).get('id');
+  const res = await fetch(`/api/blogs/${id}`);
+  const blog = await res.json();
+  const date = new Date(blog.created_at);
+  const formattedDate = date.toLocaleDateString('ru-RU', {
     day: '2-digit',
     month: 'long',
     year: 'numeric'
   });
-    document.getElementById('blog').innerHTML = `
+
+  document.getElementById('blog').innerHTML = `
     <a href="bloglistadmin.html"><button>Назад</button></a>
-        <p><b>Дата создания:</b> ${formattedDate}</p>
-      <h1>${blog.title}</h1>
-      <p><i>${blog.description}</i></p>
-      <div>${blog.content}</div>
-      <h2>Рейтинг</h2>
-<p>Средняя оценка: <span id="averageRating">0</span>⭐</p>
-<hr>
-<h2>Комментарии</h2>
-<div id="comments"></div>
-    `;}loadBlog();
+    <p><b>Дата создания:</b> ${formattedDate}</p>
+    <h1>${blog.title}</h1>
+    <p><i>${blog.description}</i></p>
+    <div>${blog.content}</div>
+    <h2>Рейтинг</h2>
+    <p>Средняя оценка: <span id="averageRating">0</span>⭐</p>
+    <hr>
+    <h2>Комментарии</h2>
+    <div id="adminComments"></div>
+  `;
+
+  await loadAdminComments(id);
+}loadBlog();
+
+async function loadAdminComments(blogId) {
+  try {
+    const res = await fetch(`/api/admin/comments?blogId=${blogId}`);
+    if (!res.ok) throw new Error(`Ошибка ${res.status}`);
+    const comments = await res.json();
+    const container = document.getElementById('adminComments');
+
+    container.innerHTML = '';
+
+    comments.forEach(({ id, username, text }) => {
+      const p = document.createElement('p');
+      p.innerHTML = `<b>${username}:</b> ${text} `;
+
+      const delBtn = document.createElement('button');
+      delBtn.textContent = 'Удалить';
+      delBtn.onclick = () => deleteCommentByAdmin(id);
+      p.appendChild(delBtn);
+
+      container.appendChild(p);
+    });
+
+  } catch (err) {
+    console.error('Ошибка загрузки комментариев для админа:', err);
+  }
+}
+ 
+
+    function deleteCommentByAdmin(commentId) {
+  if (!confirm('Вы уверены, что хотите удалить этот комментарий?')) return;
+
+  fetch(`/api/admin/comments/${commentId}`, {
+    method: 'DELETE',
+    credentials: 'include'
+  })
+  .then(res => res.json())
+  .then(data => {
+    alert(data.message);
+    location.reload(); // Перезагрузка страницы или обновление списка
+  })
+  .catch(err => console.error('Ошибка при удалении:', err));
+}
   </script>
 </body>
 </html>

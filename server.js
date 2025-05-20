@@ -7,6 +7,9 @@ const cors = require('cors');
 const fs = require('fs');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
+const sanitizeHtml = require('sanitize-html'); 
 
 const app = express();
 const port = 3000;
@@ -25,9 +28,11 @@ app.use(session({ secret: 'adminsecret secret-key', resave: false, saveUninitial
 // Указываем Express, где искать статические файлы
 app.use(express.static(path.join(__dirname, 'views')));
 
-['register', 'login', 'profile', 'comments', 'admin'].forEach(route => {
+['register', 'login', 'profile', 'comments', 'admin', 'forum'].forEach(route => {
   app.get(`/${route}`, (req, res) => res.sendFile(path.join(__dirname, `public/${route}.html`)));
 });
+
+
 
 // Подключаем БД
 const db = new sqlite3.Database('ratings.db', (err) => {
@@ -74,7 +79,23 @@ const tables = [
     username TEXT UNIQUE,
     password TEXT,
     secret_key TEXT
-  )`
+  )`,
+  `CREATE TABLE IF NOT EXISTS forum_questions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    description TEXT NOT NULL,
+    image TEXT,
+    user_id INTEGER NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)`,
+
+`CREATE TABLE IF NOT EXISTS forum_answers (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    question_id INTEGER NOT NULL,
+    answer TEXT NOT NULL,
+    user_id INTEGER NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)`
 ];
 
 db.serialize(() => {
@@ -98,6 +119,16 @@ const transporter = nodemailer.createTransport({
 app.post('/api/admin/register', (req, res) => {
     const { email, username, password } = req.body;
     const secretKey = Math.floor(100000 + Math.random() * 900000).toString();
+ 
+    function isPasswordValid(password) {
+  const minLength = 8;
+  const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/;
+  return password.length >= minLength && regex.test(password);
+}
+
+    if (!isPasswordValid(password)) {
+    return res.status(400).json({ message: 'Пароль слишком простой. Используйте заглавные, строчные буквы, цифры и спецсимволы.' });
+  }
 
     const insert = `INSERT INTO admins (email, username, password, secret_key) VALUES (?, ?, ?, ?)`;
     db.run(insert, [email, username, password, secretKey], function (err) {
@@ -145,7 +176,7 @@ app.post('/api/admin/login', (req, res) => {
     [username, password, secret_key],
     (err, row) => {
       if (err || !row) return res.status(401).json({ message: 'Неверные данные' });
-      req.session.admin = { id: row.id, username: row.username };
+      req.session.admin = { id: row.id, username: row.username, isAdmin: true };
       res.json({ message: 'Успешный вход' });
     });
 });
@@ -153,18 +184,19 @@ app.post('/api/admin/login', (req, res) => {
 // Проверка сессии
 app.get('/api/admin/session', (req, res) => {
   if (req.session.admin) {
-    res.json({ loggedIn: true, username: req.session.admin.username });
+    res.json({ loggedIn: true, username: req.session.admin.username, isAdmin: true });
   } else {
     res.json({ loggedIn: false });
   }
 });
 
-// Выход из аккаунта
-app.post('/api/logout', (req, res) => {
-  req.session.destroy(() => {
-    res.json({ success: true });
-  });
-});
+function checkAuth(req, res, next) {
+  if (req.session && req.session.user) {
+    return next();
+  }
+  return res.status(401).json({ message: 'Не авторизован' });
+}
+
 
 // Получение админитраторов
 app.get('/api/admin/list', (req, res) => {
@@ -218,21 +250,30 @@ app.post('/api/register', (req, res) => {
 app.post('/api/login', (req, res) => {
     const { username, password } = req.body;
     db.get('SELECT id, username FROM users WHERE username = ? AND password = ?', [username, password], (err, user) => {
-        if (err || !user) return res.json({ success: false, message: 'Неверные учетные данные' });
-        req.session.user = user;
-        req.session.userId = user.id;
-        res.json({ success: true, message: 'Добро пожаловать!' });
-    });
+    if (err || !user) return res.json({ success: false, message: 'Неверные учетные данные' });
+    req.session.user = user;
+    req.session.userId = user.id;
+    req.session.username = user.username;
+    req.session.isAdmin = user.isAdmin; 
+    res.json({ success: true, message: 'Добро пожаловать!' });
+});
 });
 
 // Проверка сессии
 app.get('/api/session', (req, res) => {
-    if (req.session.user) {
-        res.json({ loggedIn: true, user: req.session.user });
-    } else {
-        res.json({ loggedIn: false });
-    }
+  if (req.session && req.session.userId) {
+    res.json({
+      id: req.session.userId, 
+      username: req.session.username,
+      isAdmin: req.session.isAdmin || false,
+      loggedIn: true
+    });
+  } else {
+    res.json({ loggedIn: false });
+  }
 });
+
+
 
 // Выход
 app.post('/api/logout', (req, res) => {
@@ -263,6 +304,95 @@ app.get('/api/comments', (req, res) => {
     });
 });
 
+app.put('/api/blogs/:id/comments/:commentId', checkAuth, (req, res) => {
+  const blogId = req.params.id;
+  const commentId = req.params.commentId;
+  const userId = req.session.user.id;
+  const { content } = req.body;
+
+  if (!content || content.trim() === '') {
+    return res.status(400).json({ message: 'Комментарий не может быть пустым' });
+  }
+
+  const sql = `UPDATE comments SET content = ? WHERE id = ? AND blog_id = ? AND user_id = ?`;
+
+  db.run(sql, [content, commentId, blogId, userId], function(err) {
+    if (err) {
+      console.error('Ошибка при обновлении комментария:', err);
+      return res.status(500).json({ message: 'Ошибка сервера' });
+    }
+
+    if (this.changes === 0) {
+      return res.status(403).json({ message: 'Нет доступа или комментарий не найден' });
+    }
+
+    res.json({ message: 'Комментарий обновлён' });
+  });
+});
+
+app.delete('/api/blogs/:id/comments/:commentId', (req, res) => {
+  const blogId = req.params.id;
+  const commentId = req.params.commentId;
+
+  if (req.session.admin) {
+    // Админ — может удалить любой комментарий
+    db.run(`DELETE FROM comments WHERE id = ? AND blog_id = ?`, [commentId, blogId], function(err) {
+      if (err) {
+        console.error('Ошибка при удалении комментария админом:', err);
+        return res.status(500).json({ message: 'Ошибка сервера' });
+      }
+
+      return res.json({ message: 'Комментарий удалён администратором' });
+    });
+  } else if (req.session.user) {
+    // Пользователь может удалить только свой комментарий
+    const userId = req.session.user.id;
+
+    db.run(`DELETE FROM comments WHERE id = ? AND blog_id = ? AND user_id = ?`, [commentId, blogId, userId], function(err) {
+      if (err) {
+        console.error('Ошибка при удалении комментария:', err);
+        return res.status(500).json({ message: 'Ошибка сервера' });
+      }
+
+      if (this.changes === 0) {
+        return res.status(403).json({ message: 'Нет доступа или комментарий не найден' });
+      }
+
+      return res.json({ message: 'Комментарий удалён' });
+    });
+  } else {
+    return res.status(401).json({ message: 'Не авторизован' });
+  }
+});
+
+
+app.delete('/api/forum/questions/:questionId', (req, res) => {
+  const questionId = req.params.questionId;
+
+  if (!req.session.admin) {
+    return res.status(403).json({ message: 'Нет доступа' });
+  }
+
+  db.run(`DELETE FROM forum_questions WHERE id = ?`, [questionId], function(err) {
+    if (err) {
+      console.error('Ошибка при удалении вопроса:', err);
+      return res.status(500).json({ message: 'Ошибка сервера' });
+    }
+
+    // Также удалим ответы, связанные с этим вопросом
+    db.run(`DELETE FROM forum_answers WHERE question_id = ?`, [questionId], function(err2) {
+      if (err2) {
+        console.error('Ошибка при удалении ответов к вопросу:', err2);
+        return res.status(500).json({ message: 'Ошибка при удалении ответов' });
+      }
+
+      res.json({ message: 'Вопрос и связанные ответы удалены' });
+    });
+  });
+});
+
+
+
 app.post('/api/ratings', (req, res) => {
   const { blogId, userId, rating } = req.body;
 
@@ -277,17 +407,255 @@ app.post('/api/ratings', (req, res) => {
   );
 });
 
-// app.get('/api/average_rating', (req, res) => {
-//     db.get('SELECT AVG(rating) AS average_rating FROM ratings', (err, row) => {
-//         if (err) {
-//             console.error('Ошибка при получении среднего рейтинга:', err);
-//             return res.status(500).json({ success: false, error: err.message });
-//         }
-//         // Если рейтинг null (когда нет данных), устанавливаем 0.0
-//         const averageRating = row && row.average_rating ? parseFloat(row.average_rating).toFixed(1) : "0.0";
-//         res.json({ average_rating: parseFloat(averageRating) });
-//     });
-// });
+
+
+// Загрузка модуля multer для загрузки файлов
+
+function requireLogin(req, res, next) {
+    if (!req.session.userId) {
+        return res.status(401).json({ error: 'Not logged in' });
+    }
+    next();
+}
+
+
+// Создание вопроса
+app.post('/estions', upload.single('image'), (req, res) => {
+    const { title, description } = req.body;
+    const image = req.file ? req.file.filename : null;
+    const userId = req.session.userId;
+    db.run(`INSERT INTO forum_questions (title, description, image, user_id) VALUES (?, ?, ?, ?)`,
+        [title, description, image, userId], function(err) {
+            if (err) return res.status(500).json({ error: err.message });
+            res.json({ id: this.lastID });
+        });
+});
+
+// Добавление ответа
+app.post('/api/forum/answers', (req, res) => {
+    const { question_id, answer } = req.body;
+    const userId = req.session.userId;
+    db.run(`INSERT INTO forum_answers (question_id, answer, user_id) VALUES (?, ?, ?)`,
+        [question_id, answer, userId], function(err) {
+            if (err) return res.status(500).json({ error: err.message });
+            res.json({ id: this.lastID });
+        });
+});
+
+app.get('/api/forum/questions', (req, res) => {
+    db.all(`SELECT q.*, u.username FROM forum_questions q
+            JOIN users u ON q.user_id = u.id
+            ORDER BY q.created_at DESC`, (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(rows);
+    });
+});
+
+
+app.get('/api/forum/questions/:id', (req, res) => {
+    const questionId = req.params.id;
+    db.get(`SELECT q.*, u.username FROM forum_questions q
+            JOIN users u ON q.user_id = u.id
+            WHERE q.id = ?`, [questionId], (err, question) => {
+        if (err) return res.status(500).json({ error: err.message });
+        if (!question) return res.status(404).json({ error: "Question not found" });
+
+        db.all(`SELECT a.*, u.username FROM forum_answers a
+                JOIN users u ON a.user_id = u.id
+                WHERE a.question_id = ? ORDER BY a.created_at`, [questionId], (err2, answers) => {
+            if (err2) return res.status(500).json({ error: err2.message });
+            res.json({ question, answers });
+        });
+    });
+});
+
+app.post('/api/forum/questions', checkAuth, upload.single('image'), (req, res) => {
+  const { title, description } = req.body;
+  const image = req.file ? req.file.filename : null;
+  const userId = req.session.user.id;
+
+  if (!title || !description) {
+    return res.status(400).json({ message: 'Заполните все поля' });
+  }
+
+  db.run(
+    `INSERT INTO forum_questions (title, description, image, user_id) VALUES (?, ?, ?, ?)`,
+    [title, description, image, userId],
+    function (err) {
+      if (err) {
+        console.error('Ошибка при добавлении вопроса:', err.message);
+        return res.status(500).json({ error: err.message });
+      }
+      res.json({ message: 'Вопрос добавлен', questionId: this.lastID });
+    }
+  );
+});
+
+
+app.delete('/api/forum/questions/:id', (req, res) => {
+  if (!req.session.user) return res.status(401).json({ error: 'Не авторизован' });
+
+  const questionId = req.params.id;
+  const userId = req.session.user.id;
+
+  // Проверяем, что пользователь — автор вопроса
+  db.get('SELECT * FROM forum_questions WHERE id = ?', [questionId], (err, row) => {
+    if (err) return res.status(500).json({ error: err.message });
+    if (!row) return res.status(404).json({ error: 'Вопрос не найден' });
+    if (row.user_id !== userId) return res.status(403).json({ error: 'Нет прав на удаление' });
+
+    // Удаляем вопрос
+    db.run('DELETE FROM forum_questions WHERE id = ?', [questionId], function(err) {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({ message: 'Вопрос удалён' });
+    });
+  });
+});
+
+
+app.delete('/api/forum/questions/:id', (req, res) => {
+  if (!req.session.admin) return res.status(403).json({ message: 'Доступ запрещён' });
+
+  const questionId = req.params.id;
+
+  // Удалить сначала ответы к вопросу, затем сам вопрос
+  db.run('DELETE FROM forum_answers WHERE question_id = ?', [questionId], function(err) {
+    if (err) return res.status(500).json({ message: 'Ошибка при удалении ответов' });
+
+    db.run('DELETE FROM forum_questions WHERE id = ?', [questionId], function(err) {
+      if (err) return res.status(500).json({ message: 'Ошибка при удалении вопроса' });
+      res.json({ message: 'Вопрос и связанные ответы удалены' });
+    });
+  });
+});
+
+app.post('/api/forum/:id/answers', (req, res) => {
+  const questionId = req.params.id;
+  const { answer } = req.body;
+  const userId = req.session.user?.id;
+
+  if (!userId) {
+    return res.status(401).json({ message: 'Пользователь не авторизован' });
+  }
+
+  if (!answer || answer.trim() === '') {
+    return res.status(400).json({ message: 'Ответ не может быть пустым' });
+  }
+
+  // Очистка от потенциально опасного HTML/JS
+  const cleanAnswer = sanitizeHtml(answer.trim(), {
+     allowedTags: ['b', 'i', 'em', 'strong', 'br'],        // можно разрешить теги, например ['b', 'i', 'br']
+    allowedAttributes: {}   // и их атрибуты, если нужно
+  });
+
+  const sql = `INSERT INTO forum_answers (question_id, answer, user_id) VALUES (?, ?, ?)`;
+
+  db.run(sql, [questionId, cleanAnswer, userId], function(err) {
+    if (err) {
+      console.error('Ошибка при добавлении ответа:', err.message);
+      return res.status(500).json({ message: 'Ошибка сервера' });
+    }
+
+    res.status(201).json({ message: 'Ответ добавлен', answerId: this.lastID });
+  });
+});
+
+// Удаление ответа на вопрос форума
+app.delete('/api/forum/answers/:id', (req, res) => {
+  const answerId = req.params.id;
+
+  if (!req.session.user && !req.session.admin) {
+    return res.status(401).json({ message: 'Не авторизован' });
+  }
+
+  const userId = req.session.user ? req.session.user.id : null;
+  const isAdmin = !!req.session.admin;
+
+  if (isAdmin) {
+    // Админ может удалять любой ответ
+    db.run('DELETE FROM forum_answers WHERE id = ?', [answerId], function(err) {
+      if (err) {
+        console.error('Ошибка при удалении ответа админом:', err);
+        return res.status(500).json({ message: 'Ошибка сервера' });
+      }
+      if (this.changes === 0) {
+        return res.status(404).json({ message: 'Ответ не найден' });
+      }
+      res.json({ message: 'Ответ удалён администратором' });
+    });
+  } else {
+    // Пользователь может удалять только свои ответы
+    db.run('DELETE FROM forum_answers WHERE id = ? AND user_id = ?', [answerId, userId], function(err) {
+      if (err) {
+        console.error('Ошибка при удалении ответа пользователем:', err);
+        return res.status(500).json({ message: 'Ошибка сервера' });
+      }
+      if (this.changes === 0) {
+        return res.status(403).json({ message: 'Нет доступа или ответ не найден' });
+      }
+      res.json({ message: 'Ответ удалён' });
+    });
+  }
+});
+
+
+app.get('/api/admin/comments', (req, res) => {
+  const blogId = req.query.blogId;
+  if (!blogId) return res.status(400).json({ error: 'Отсутствует blogId' });
+
+  db.all(`
+  SELECT comments.id, users.username, comments.text 
+  FROM comments 
+  JOIN users ON comments.user_id = users.id
+  WHERE comments.blog_id = ?
+`, [blogId], (err, rows) => {
+    if (err) {
+      console.error('Ошибка при получении комментариев:', err);
+      return res.status(500).json({ error: 'Ошибка сервера', details: err.message });
+    }
+    res.json(rows);
+  });
+});
+
+
+
+app.delete('/api/admin/comments/:commentId', (req, res) => {
+  if (!req.session.admin || !req.session.admin.isAdmin) {
+    return res.status(403).json({ message: 'Нет доступа — требуется администратор' });
+  }
+
+  const commentId = req.params.commentId;
+
+  db.run(`DELETE FROM comments WHERE id = ?`, [commentId], function(err) {
+    if (err) {
+      console.error('Ошибка при удалении комментария админом:', err);
+      return res.status(500).json({ message: 'Ошибка сервера' });
+    }
+
+    if (this.changes === 0) {
+      return res.status(404).json({ message: 'Комментарий не найден' });
+    }
+
+    res.json({ message: 'Комментарий удалён администратором' });
+  });
+});
+
+app.delete('/api/admin/forum/answers/:id', (req, res) => {
+  const answerId = req.params.id;
+  // Можно дополнительно проверять, что пользователь - админ (через сессию)
+
+  db.run('DELETE FROM forum_answers WHERE id = ?', [answerId], function(err) {
+    if (err) {
+      console.error('Ошибка при удалении ответа:', err);
+      return res.status(500).json({ error: 'Ошибка сервера' });
+    }
+    if (this.changes === 0) {
+      return res.status(404).json({ error: 'Ответ не найден' });
+    }
+    res.json({ message: 'Ответ успешно удалён' });
+  });
+});
+
 
 app.get('/api/blogs', (req, res) => {
   db.all('SELECT * FROM blogs', (err, rows) => {
@@ -381,35 +749,58 @@ app.delete('/api/blogs/:id/ratings', (req, res) => {
   });
 });
 
-// Добавление комментария
-app.post('/api/blogs/:id/comments', (req, res) => {
-  if (!req.session.userId) {
-      return res.status(401).json({ error: 'Not authenticated' });
+app.delete('/api/admin/blogs/:id/comments/:commentId', (req, res) => {
+  if (!req.session.admin || !req.session.admin.isAdmin) {
+    return res.status(403).json({ message: 'Доступ запрещён' });
   }
 
   const blogId = req.params.id;
-  const userId = req.session.userId;
-  const text = req.body.text;
+  const commentId = req.params.commentId;
 
-  db.run('INSERT INTO comments (blog_id, user_id, text) VALUES (?, ?, ?)', [blogId, userId, text], function(err) {
-      if (err) {
-          res.status(500).json({ error: err.message });
-      } else {
-          res.json({ success: true });
-      }
+  const sql = `DELETE FROM comments WHERE id = ? AND blog_id = ?`;
+
+  db.run(sql, [commentId, blogId], function(err) {
+    if (err) {
+      console.error('Ошибка при удалении комментария администратором:', err);
+      return res.status(500).json({ message: 'Ошибка сервера' });
+    }
+
+    if (this.changes === 0) {
+      return res.status(404).json({ message: 'Комментарий не найден' });
+    }
+
+    res.json({ message: 'Комментарий удалён администратором' });
   });
 });
+
+
+// Добавление комментария
+app.post('/api/blogs/:id/comments', checkAuth, (req, res) => {
+  const blogId = req.params.id;
+  const userId = req.session.user.id;
+  const text = sanitizeHtml(req.body.text.trim());
+
+  if (!text) return res.status(400).json({ message: 'Комментарий не может быть пустым' });
+
+  db.run(`INSERT INTO comments (blog_id, user_id, text) VALUES (?, ?, ?)`, [blogId, userId, text], function(err) {
+    if (err) return res.status(500).json({ message: 'Ошибка добавления комментария' });
+    res.status(200).json({ message: 'Комментарий добавлен' });
+  });
+});
+
 
 
 // Получение всех комментариев для блога
 app.get('/api/blogs/:id/comments', (req, res) => {
   const blogId = req.params.id;
-  db.all('SELECT comments.text, users.username FROM comments JOIN users ON comments.user_id = users.id WHERE blog_id = ?', [blogId], (err, rows) => {
-      if (err) {
-          res.status(500).json({ error: err.message });
-      } else {
-          res.json(rows);
-      }
+  db.all(`
+    SELECT users.username, comments.text
+    FROM comments
+    JOIN users ON comments.user_id = users.id
+    WHERE blog_id = ?
+  `, [blogId], (err, rows) => {
+    if (err) return res.status(500).json({ message: 'Ошибка загрузки комментариев' });
+    res.json(rows);
   });
 });
 app.put('/api/blogs/:id', (req, res) => {

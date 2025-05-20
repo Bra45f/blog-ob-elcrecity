@@ -14,7 +14,7 @@ async function loadBlog() {
     <p><b>Дата создания:</b> ${formattedDate}</p>
       <h1>${blog.title}</h1>
       <p><i>${blog.description}</i></p>
-      <div>${blog.content}</div>
+      <div class="text">${blog.content}</div>
       <h2>Рейтинг</h2>
   <div class="rating">
     <input type="hidden" id="star1_hidden" value="1">
@@ -38,8 +38,10 @@ async function loadBlog() {
 <button id="ratingButton" onclick="saveRating()">Изменить</button>
 <button id="deleteRatingButton" onclick="deleteRating()" style="display: none;">Удалить</button>
 <hr>
-<h2>Комментарии</h2>
+
 <textarea id="comment" placeholder="Оставьте комментарий"></textarea><br>
 <button onclick="sendComment()">Отправить</button>
+<hr><h2>Комментарии</h2>
 <div id="comments"></div>
+<hr>
     `;}loadBlog();
