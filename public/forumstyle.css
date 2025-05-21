@@ -77,6 +77,9 @@
       font-family: "Montserrat", sans-serif;
     }
 
+    p{
+       font-family: "Montserrat", sans-serif;
+    }
     form {
       background: #fff;
       padding: 20px;
@@ -153,14 +156,66 @@
       text-decoration: underline;
     }
 
-footer{
-  position: fixed;
+.text-chkbox {
+  display: block;
+  position: relative;
+  .label-text {
+      cursor: pointer;
+      margin: 10px;
+      margin-left: 30px;
+      font-size: 22px;
+       font-family: "Montserrat", sans-serif;
+  }
+  .hidden-text {
+      display: block;
+      overflow: hidden;
+      max-height: 0px;
+      opacity: 0;
+      transition: opacity .3s 0s;
+      margin-left: 30px;
+      margin-bottom: 10px;
+      font-size: 18px;
+       font-family: "Montserrat", sans-serif;
+  }
+  input {
+      position: absolute;
+      width: 1px; height: 1px;
+      top: -20px; left: -20px;
+  }
+  input:checked + .hidden-text {
+      max-height: none;
+      opacity: 1;
+  }    
+}
+
+.hint {
+  font-size: 12px;
+  color: #666;
+  margin-top: 15px;
+  display: none;
+  position: absolute;
   left: 0;
-  bottom: 0;
-  /* Добавим цвет и ширину блока для наглядности*/
-  background-color: #444;
+  top: 21px;
+}
+
+input:focus + .hint{
+  display: block;
+}
+
+.mystyle {
+  color: #000;
+  display: block;
   width: 100%;
-   
+  padding: 25px;
+  font-size: 25px;
+}
+
+footer{
+  padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+
+
 }
 
 .footer-menu {

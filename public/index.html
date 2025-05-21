@@ -73,6 +73,7 @@
     <br>
       <h1 class="new_blogs">Новые блоги</h1>
       <div id="blog-list"></div>
+      <button id="show-more-btn" style="display: none;">Показать больше</button>
 
       <h1 class="new_blogs" id="faq">Частые вопросы  <img src="IMG-TEST/free-icon-font-interrogation-3916718.png" title="Нажмите на вопрос, чтобы узнать ответ" style="width:20px;"></h1>
 
@@ -139,23 +140,34 @@
   </nav>
 </footer>
       <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-          const res = await fetch('/api/blogs');
-          const blogs = await res.json();
-          const container = document.getElementById('blog-list');
-      
-          blogs.forEach(blog => {
-            const card = document.createElement('div');
-            card.className = 'blog-card'; // Добавляем класс для стилизации
-            card.innerHTML = `
-              <h2 class="blog-title">${blog.title}</h2>
-              <p class="blog-description"><i>${blog.description}</i></p>
-              <a class="blog-link" href="/blog.html?id=${blog.id}">Читать полностью</a>
-            `;
-            container.appendChild(card);
-          });
-        });
+         document.addEventListener('DOMContentLoaded', async () => {
+    const res = await fetch('/api/blogs');
+    const blogs = await res.json();
+    const container = document.getElementById('blog-list');
+    const showMoreBtn = document.getElementById('show-more-btn');
 
+    const maxVisible = 6;
+
+    // показать первые 6 блогов
+    blogs.slice(0, maxVisible).forEach(blog => {
+      const card = document.createElement('div');
+      card.className = 'blog-card';
+      card.innerHTML = `
+        <h2 class="blog-title">${blog.title}</h2>
+        <p class="blog-description"><i>${blog.description}</i></p>
+        <a class="blog-link" href="/blog.html?id=${blog.id}">Читать полностью</a>
+      `;
+      container.appendChild(card);
+    });
+
+    // показать кнопку, если блогов больше 6
+    if (blogs.length > maxVisible) {
+      showMoreBtn.style.display = 'block';
+      showMoreBtn.addEventListener('click', () => {
+        window.location.href = 'bloglist.html';
+      });
+    }
+  });
         function myFunction() {
   var element = document.getElementById("myDIV");
   element.classList.toggle("mystyle");

@@ -192,6 +192,22 @@
  }
 
 
+#show-more-btn {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #4169e1;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: "Montserrat", sans-serif;
+}
+#show-more-btn:hover {
+  background-color: #314cb6;
+}
+
 
 
 .img1{
