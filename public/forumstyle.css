@@ -91,6 +91,11 @@
       margin-right: auto;
       margin-top: 30px;
     }
+@media screen and (max-width: 767px) {
+  form {
+      border-radius: 0px;
+    }
+}
 
     form input[type="text"],
     form textarea {
@@ -137,6 +142,7 @@
   padding: 20px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;  
     }
+
 .question-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
@@ -155,6 +161,24 @@
     .question-card a:hover {
       text-decoration: underline;
     }
+
+@media (max-width: 767px) {
+  #questions {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    padding: 10px;
+    gap: 15px;
+  }
+
+  .question-card {
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+
+  .question-card h3 {
+    font-size: 18px;
+  }
+}
+
 
 .text-chkbox {
   display: block;
@@ -237,4 +261,15 @@ footer{
 .footer-menu > li > a:hover{
   background: #000;
   border-radius: 10px;
+}
+
+  @media (max-width: 767px) {
+  .footer-menu {
+    flex-direction: column;  
+    padding: 10px;
+  }
+  .footer-menu > li > a {
+    padding: 10px 0;        
+    text-align: center;      
+  }
 }
