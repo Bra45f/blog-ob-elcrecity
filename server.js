@@ -98,6 +98,8 @@ const tables = [
 )`
 ];
 
+
+
 db.serialize(() => {
   tables.forEach(sql => db.run(sql, err => {
     if (err) console.error('Ошибка создания таблицы:', err.message);

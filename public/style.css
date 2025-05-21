@@ -1,3 +1,4 @@
+
 .hero {
   position: relative;
   width: 100%;
@@ -44,7 +45,24 @@
   font-family: "Montserrat", sans-serif;
 }
 
+ @media screen and (max-width: 600px) {
+   .hero {
+    height: 600px;
+  }
 
+.hero-img {
+  width: 250%;
+  display: block;
+  object-fit: cover;
+  height: auto;
+}
+
+  .text {
+    padding: 15px;
+    font-size: 16px;
+  }
+    
+  }
 /* стиль меню навигации */
 
 
@@ -138,6 +156,7 @@
   font-family: "Montserrat", sans-serif;
  }
  
+
  .h2text {
   text-align: center;
   margin-top: 30px;
@@ -273,6 +292,10 @@
       float: right;
 
     }
+
+    .imgeeeee{
+  width: 100%;
+ }
   }
 
 .text-block {
@@ -418,4 +441,14 @@ footer{
 .footer-menu > li > a:hover{
   background: #000;
   border-radius: 10px;
+}
+@media (max-width: 767px) {
+  .footer-menu {
+    flex-direction: column;  
+    padding: 10px;
+  }
+  .footer-menu > li > a {
+    padding: 10px 0;        
+    text-align: center;      
+  }
 }
