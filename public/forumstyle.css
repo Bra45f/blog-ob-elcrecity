@@ -77,7 +77,14 @@
       font-family: "Montserrat", sans-serif;
     }
 
+     h3{
+      margin-top: 10px;
+      margin-bottom: 10px;
+       font-family: "Montserrat", sans-serif;
+    }
     p{
+      margin-top: 10px;
+      margin-bottom: 10px;
        font-family: "Montserrat", sans-serif;
     }
     form {
@@ -103,12 +110,14 @@
       padding: 10px;
       margin: 10px 0;
       border-radius: 5px;
-      border: 1px solid #ccc;
+      border: 2px solid #4CAF50;
       font-family: "Montserrat", sans-serif;
     }
 
     form input[type="file"] {
       margin: 10px 0;
+
+      
     }
 
     form button {
@@ -272,4 +281,40 @@ footer{
     padding: 10px 0;        
     text-align: center;      
   }
+}
+
+.tags-fieldset {
+  border: 2px solid #4CAF50;
+  border-radius: 5px;
+  padding: 1rem 1.5rem;
+  background-color: #f9f9f9;
+  max-width: 100%;
+  margin: 1.5rem 0;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.tags-fieldset legend {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #2e7d32;
+  padding: 0 0.5rem;
+}
+
+.tags-fieldset label {
+  display: block;
+  margin-bottom: 0.6rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #333;
+  transition: color 0.2s;
+}
+
+.tags-fieldset input[type="checkbox"] {
+  margin-right: 0.5rem;
+  transform: scale(1.2);
+  accent-color: #4CAF50;
+}
+
+@media (max-width: 767px) {
+
 }

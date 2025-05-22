@@ -76,8 +76,14 @@
       margin-bottom: 10px;
       font-family: "Montserrat", sans-serif;
     }
-
+    h3{
+      margin-top: 10px;
+      margin-bottom: 10px;
+       font-family: "Montserrat", sans-serif;
+    }
     p{
+      margin-top: 10px;
+      margin-bottom: 10px;
        font-family: "Montserrat", sans-serif;
     }
     form {

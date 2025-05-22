@@ -162,7 +162,11 @@ async function loadPage() {
   const data = await res.json();
 
   const q = data.question;
-  let html = `<h2>${q.title}</h2><p>${q.description}</p>`;
+  let html = `
+  <h2>${q.title}</h2>
+  <p>${q.description}</p>
+  <p><strong>Тема:</strong> ${q.tags || q.tag || 'Без темы'}</p>
+`;
   if (q.imageUrl) html += `<img src="${q.imageUrl}" style="max-width:100%;">`;
   document.getElementById('question').innerHTML = html;
 

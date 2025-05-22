@@ -25,7 +25,14 @@
 
   <form id="questionForm" enctype="multipart/form-data">
     <input type="text" name="title" placeholder="Заголовок" required />
-    <textarea name="description" placeholder="Опишите проблему" required></textarea>
+    <textarea name="description" placeholder="Опишите проблему" required></textarea></fieldset>
+    <fieldset class="tags-fieldset">
+  <legend class="legend">Выберите тему:</legend>
+  <label><input type="checkbox" name="tags" value="Вопрос"> Вопрос</label><br>
+  <label><input type="checkbox" name="tags" value="Обсуждение"> Обсуждение</label><br>
+  <label><input type="checkbox" name="tags" value="Фото"> Фото</label><br>
+  <label><input type="checkbox" name="tags" value="Другое"> Другое</label><br>
+</fieldset>
     <button type="submit">Задать вопрос</button>
   </form>
   
@@ -97,19 +104,27 @@
   </footer>
   <script>
     document.getElementById("questionForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const formData = new FormData(e.target);
-      const res = await fetch('/api/forum/questions', {
-        method: 'POST',
-        body: formData
-      });
-      if (res.ok) {
-        alert("Вопрос добавлен!");
-        location.reload();
-      } else {
-        alert("Ошибка: вы должны быть авторизованы.");
-      }
-    });
+  e.preventDefault();
+  const form = e.target;
+  const formData = new FormData(form);
+
+  // Собираем выбранные теги
+  const selectedTags = Array.from(form.querySelectorAll('input[name="tags"]:checked')).map(el => el.value);
+  formData.append('selectedTags', JSON.stringify(selectedTags)); // ← строкой, чтобы сервер понял
+
+  const res = await fetch('/api/forum/questions', {
+    method: 'POST',
+    body: formData
+  });
+
+  if (res.ok) {
+    alert("Вопрос добавлен!");
+    location.reload();
+  } else {
+    alert("Ошибка: вы должны быть авторизованы.");
+  }
+});
+
 
     fetch('/api/forum/questions')
       .then(res => res.json())
@@ -118,6 +133,7 @@
           <div class="question-card">
             <h3><a href="question.html?id=${q.id}">${q.title}</a></h3>
             <p>${q.description}</p>
+            <p>Темы: ${q.tags}</p>
           </div>
         `).join('');
         document.getElementById('questions').innerHTML = list;

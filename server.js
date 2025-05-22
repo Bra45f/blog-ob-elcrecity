@@ -85,9 +85,10 @@ const tables = [
     title TEXT NOT NULL,
     description TEXT NOT NULL,
     image TEXT,
+    tags TEXT,
     user_id INTEGER NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-)`,
+    )`,
 
 `CREATE TABLE IF NOT EXISTS forum_answers (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -455,43 +456,50 @@ app.get('/api/forum/questions', (req, res) => {
 
 
 app.get('/api/forum/questions/:id', (req, res) => {
-    const questionId = req.params.id;
-    db.get(`SELECT q.*, u.username FROM forum_questions q
-            JOIN users u ON q.user_id = u.id
-            WHERE q.id = ?`, [questionId], (err, question) => {
-        if (err) return res.status(500).json({ error: err.message });
-        if (!question) return res.status(404).json({ error: "Вопросы не найдены" });
-db.all(`SELECT a.*, u.username, u.is_admin FROM forum_answers a
-        JOIN users u ON a.user_id = u.id
-        WHERE a.question_id = ? ORDER BY a.created_at`, [questionId], (err2, answers) => {
-    if (err2) return res.status(500).json({ error: err2.message });
+  const questionId = req.params.id;
 
-    res.json({ question, answers });
-});
-    });
-});
-
-app.post('/api/forum/questions', checkAuth, upload.single('image'), (req, res) => {
-  const { title, description } = req.body;
-  const image = req.file ? req.file.filename : null;
-  const userId = req.session.user.id;
-
-  if (!title || !description) {
-    return res.status(400).json({ message: 'Заполните все поля' });
-  }
-
-  db.run(
-    `INSERT INTO forum_questions (title, description, image, user_id) VALUES (?, ?, ?, ?)`,
-    [title, description, image, userId],
-    function (err) {
-      if (err) {
-        console.error('Ошибка при добавлении вопроса:', err.message);
-        return res.status(500).json({ error: err.message });
-      }
-      res.json({ message: 'Вопрос добавлен', questionId: this.lastID });
+  db.get(`SELECT q.*, u.username FROM forum_questions q
+          JOIN users u ON q.user_id = u.id
+          WHERE q.id = ?`, [questionId], (err, question) => {
+    if (err) {
+      console.error('Ошибка при получении вопроса:', err);
+      return res.status(500).json({ error: err.message });
     }
-  );
+    if (!question) {
+      console.log('Вопрос не найден');
+      return res.status(404).json({ error: "Вопросы не найдены" });
+    }
+
+    db.all(`SELECT a.*, u.username FROM forum_answers a
+            JOIN users u ON a.user_id = u.id
+            WHERE a.question_id = ? ORDER BY a.created_at`, [questionId], (err2, answers) => {
+      if (err2) {
+        console.error('Ошибка при получении ответов:', err2);
+        return res.status(500).json({ error: err2.message });
+      }
+
+      res.json({ question, answers });
+    });
+  });
 });
+
+app.post('/api/forum/questions', upload.none(), async (req, res) => {
+  const { title, description } = req.body;
+  const tags = JSON.parse(req.body.selectedTags || '[]'); // ← распарсим строки в массив
+
+  if (!req.session.user) return res.status(401).send("Unauthorized");
+
+  const db = new sqlite3.Database('ratings.db'); 
+
+  await db.run(
+    `INSERT INTO forum_questions (title, description, tags, user_id, created_at)
+     VALUES (?, ?, ?, ?, datetime('now'))`,
+    [title, description, tags.join(','), req.session.user.id]
+  );
+
+  res.status(200).send("OK");
+});
+
 
 
 app.delete('/api/forum/questions/:id', (req, res) => {
