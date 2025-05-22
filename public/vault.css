@@ -206,6 +206,7 @@ footer{
   /* Добавим цвет и ширину блока для наглядности*/
   background-color: #222;
   width: 100%;
+  z-index: 10;
    
 }
 
@@ -228,4 +229,21 @@ footer{
 .footer-menu > li > a:hover{
   background: #000;
   border-radius: 10px;
+}
+
+@media screen and (max-width: 600px) {
+  footer{
+    position: static;
+    bottom: auto;
+  }
+  
+  .footer-menu {
+     
+    flex-direction: column;  
+    padding: 10px;
+  }
+  .footer-menu > li > a {
+    padding: 10px 0;        
+    text-align: center;      
+  }
 }

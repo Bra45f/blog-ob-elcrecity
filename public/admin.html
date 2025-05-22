@@ -2,6 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Админка блогов</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,13 +21,13 @@
     </ul>
   </nav>
  <div class="welcome" id="welcomeMessage"></div>
- <button id="logoutButton" style="display:none;" onclick="logout()">Выйти</button>
+  <button class="logoutButton" id="logoutButton" style="display:none;" onclick="logout()">Выйти</button>
  <div class="form">
   <h1>Добавить блог</h1>
   <input id="title" placeholder="Заголовок"><br>
   <textarea id="description" placeholder="Краткое описание"></textarea><br>
   <textarea id="content" placeholder="Полный текст"></textarea><br>
-  <button onclick="addBlog()">Добавить</button></div>
+  <button class="addbtm" onclick="addBlog()">Добавить</button></div>
 
   <h2>Все блоги</h2> <div id="editModal" style="display:none;  background: #fff;
       padding: 20px;

@@ -35,15 +35,17 @@ body {
     }
 
     textarea {
-      width: 780px;
-      height: 100px;
-      padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      resize: vertical;
-      font-family: inherit;
-       font-family: "Montserrat", sans-serif;
+     width: 100%;
+  max-width: 100%;
+  min-width: 100%;
+  height: 100px;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  resize: vertical;
+  font-family: "Montserrat", sans-serif;
+  box-sizing: border-box;
     }
 
 p{
@@ -74,6 +76,7 @@ p{
    footer{
    display: flex;
     list-style: none;
+     justify-content: center;
   /* Добавим цвет и ширину блока для наглядности*/
   background-color: #f9f9f9;
   width: 100%;
@@ -99,3 +102,27 @@ p{
   background: #d4d4d4;
   border-radius: 10px;
 }   
+
+@media screen and (max-width: 600px){
+
+footer {
+    justify-content: center;
+  }
+
+  .footer-menu {
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+  }
+
+  .footer-menu > li > a {
+    padding: 10px 0;
+    text-align: center;
+  }
+
+  textarea{
+    width: 100%;
+     height: 100px;
+    padding: 10px;
+  }
+}

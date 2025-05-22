@@ -276,7 +276,7 @@ h4{
     font-family: "Montserrat", sans-serif;
   }
 .logoutButton{
-background-color: #555;
+background: #555;
     color: white;
     border: none;
     padding: 12px 24px;
@@ -286,7 +286,6 @@ background-color: #555;
     transition: background-color 0.3s ease;
     margin-left: 30px;
     font-family: "Montserrat", sans-serif;
-
 }
 
 @media screen and (max-width: 600px){
@@ -294,13 +293,11 @@ background-color: #555;
    margin-left: 0px;
 }
 input, textarea{
-  width: 100%;
-  margin-left: 0%;
+  width: 250px;
   border-radius: none;
 }
-#blogs{
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+.blog-card{
+  width: 320px;
 }
 #welcomeMessage{
   text-align: center;
@@ -313,12 +310,5 @@ input, textarea{
   .footer-menu > li > a {
     padding: 10px 0;        
     text-align: center;      
-  }
-.addbtm{
-  margin-left: 0%;
-}
-  h2{
-    text-align: center;
-    margin-left: 0%;
   }
 }

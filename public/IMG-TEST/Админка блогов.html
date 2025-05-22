@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<!-- saved from url=(0032)http://localhost:3000/admin.html -->
+<html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Админка блогов</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com/">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+    <link href="./Админка блогов_files/css2" rel="stylesheet">
+  <link rel="stylesheet" href="./Админка блогов_files/adminstyle.css">
+  <script src="./Админка блогов_files/admin.js.Без названия" defer=""></script>
+</head>
+<body>
+  <nav>
+    <input type="checkbox" id="btn-menu">
+    <label for="btn-menu"></label>
+    <ul class="list-menu">
+     <li><a href="http://localhost:3000/bloglistadmin.html">Добавленные блоги</a></li>
+     <li><a href="http://localhost:3000/forumadmin.html">Форум</a></li>
+     <li><a href="http://localhost:3000/admin.html">Админ-панель</a></li>
+    </ul>
+  </nav>
+ <div class="welcome" id="welcomeMessage">Добро пожаловать, NikiktaCake!</div>
+ <button class="logoutButton" id="logoutButton" style="display: inline-block;" onclick="logout()">Выйти</button>
+ <div class="form">
+  <h1>Добавить блог</h1>
+  <input id="title" placeholder="Заголовок"><br>
+  <textarea id="description" placeholder="Краткое описание"></textarea><br>
+  <textarea id="content" placeholder="Полный текст"></textarea><br>
+  <button class="addbtm" onclick="addBlog()">Добавить</button></div>
+
+  <h2>Все блоги</h2> <div id="editModal" style="display:none;  background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1); max-width: 700px; margin-left: 30px; margin-top: 20px; margin-bottom: 20px;">
+    <h3>Редактировать блог</h3>
+    <input id="editTitle"><br>
+    <textarea id="editDescription"></textarea><br>
+    <textarea id="editContent"></textarea><br>
+    <button onclick="saveEdit()">Сохранить</button>
+    <button onclick="closeEdit()">Отмена</button>
+  </div> 
+  <div id="blogs"><div class="blog-card">
+        <p><b>Дата создания:</b> 11 мая 2025 г.</p>
+          <h4 style="color: #333;
+    margin-top: 0;
+    margin-bottom: 10px;">Как экономить электричество?</h4>
+          <p style="color: #666;
+    margin-bottom: 15px;"><b>Описание:</b> Как же это делать?vv
+</p>
+    <p><b>Автор:</b> VolPal</p>
+          <button class="nondelbtm" onclick="openBlog(17)">Открыть</button>
+          <a href="http://localhost:3000/admin.html#editModal"><button class="nondelbtm" onclick="openEdit(17, `Как экономить электричество?`, `Как же это делать?vv
+`, `аа`)">Изменить</button></a>
+          <button class="delbtm" onclick="deleteBlog(17)">Удалить</button>
+        </div><div class="blog-card">
+        <p><b>Дата создания:</b> 11 мая 2025 г.</p>
+          <h4 style="color: #333;
+    margin-top: 0;
+    margin-bottom: 10px;">аа</h4>
+          <p style="color: #666;
+    margin-bottom: 15px;"><b>Описание:</b> аа</p>
+    <p><b>Автор:</b> VolPal</p>
+          <button class="nondelbtm" onclick="openBlog(18)">Открыть</button>
+          <a href="http://localhost:3000/admin.html#editModal"><button class="nondelbtm" onclick="openEdit(18, `аа`, `аа`, `аа`)">Изменить</button></a>
+          <button class="delbtm" onclick="deleteBlog(18)">Удалить</button>
+        </div><div class="blog-card">
+        <p><b>Дата создания:</b> 11 мая 2025 г.</p>
+          <h4 style="color: #333;
+    margin-top: 0;
+    margin-bottom: 10px;">аа</h4>
+          <p style="color: #666;
+    margin-bottom: 15px;"><b>Описание:</b> аа</p>
+    <p><b>Автор:</b> VolPal</p>
+          <button class="nondelbtm" onclick="openBlog(19)">Открыть</button>
+          <a href="http://localhost:3000/admin.html#editModal"><button class="nondelbtm" onclick="openEdit(19, `аа`, `аа`, `аа`)">Изменить</button></a>
+          <button class="delbtm" onclick="deleteBlog(19)">Удалить</button>
+        </div><div class="blog-card">
+        <p><b>Дата создания:</b> 11 мая 2025 г.</p>
+          <h4 style="color: #333;
+    margin-top: 0;
+    margin-bottom: 10px;">аа</h4>
+          <p style="color: #666;
+    margin-bottom: 15px;"><b>Описание:</b> аа</p>
+    <p><b>Автор:</b> VolPal</p>
+          <button class="nondelbtm" onclick="openBlog(20)">Открыть</button>
+          <a href="http://localhost:3000/admin.html#editModal"><button class="nondelbtm" onclick="openEdit(20, `аа`, `аа`, `аа`)">Изменить</button></a>
+          <button class="delbtm" onclick="deleteBlog(20)">Удалить</button>
+        </div><div class="blog-card">
+        <p><b>Дата создания:</b> 15 мая 2025 г.</p>
+          <h4 style="color: #333;
+    margin-top: 0;
+    margin-bottom: 10px;">Тестовый блог</h4>
+          <p style="color: #666;
+    margin-bottom: 15px;"><b>Описание:</b> Тестовый блог</p>
+    <p><b>Автор:</b> VolPal</p>
+          <button class="nondelbtm" onclick="openBlog(21)">Открыть</button>
+          <a href="http://localhost:3000/admin.html#editModal"><button class="nondelbtm" onclick="openEdit(21, `Тестовый блог`, `Тестовый блог`, `Тестовый блог`)">Изменить</button></a>
+          <button class="delbtm" onclick="deleteBlog(21)">Удалить</button>
+        </div><div class="blog-card">
+        <p><b>Дата создания:</b> 19 мая 2025 г.</p>
+          <h4 style="color: #333;
+    margin-top: 0;
+    margin-bottom: 10px;">aa</h4>
+          <p style="color: #666;
+    margin-bottom: 15px;"><b>Описание:</b> dddd</p>
+    <p><b>Автор:</b> NikiktaCake</p>
+          <button class="nondelbtm" onclick="openBlog(23)">Открыть</button>
+          <a href="http://localhost:3000/admin.html#editModal"><button class="nondelbtm" onclick="openEdit(23, `aa`, `dddd`, `dd`)">Изменить</button></a>
+          <button class="delbtm" onclick="deleteBlog(23)">Удалить</button>
+        </div><div class="blog-card">
+        <p><b>Дата создания:</b> 21 мая 2025 г.</p>
+          <h4 style="color: #333;
+    margin-top: 0;
+    margin-bottom: 10px;">аа</h4>
+          <p style="color: #666;
+    margin-bottom: 15px;"><b>Описание:</b> аа</p>
+    <p><b>Автор:</b> NikiktaCake</p>
+          <button class="nondelbtm" onclick="openBlog(26)">Открыть</button>
+          <a href="http://localhost:3000/admin.html#editModal"><button class="nondelbtm" onclick="openEdit(26, `аа`, `аа`, `аа`)">Изменить</button></a>
+          <button class="delbtm" onclick="deleteBlog(26)">Удалить</button>
+        </div></div>
+
+ 
+  <footer>
+    <nav>
+      <ul class="footer-menu">
+        <li><a href="http://localhost:3000/index.html">Вернуться на сайт</a></li>
+        <li><a href="http://localhost:3000/bloglistadmin.html">Добавленные блоги</a></li>
+     <li><a href="http://localhost:3000/forumadmin.html">Форум</a></li>
+     <li><a href="http://localhost:3000/admin.html">Админ-панель</a></li>
+      </ul>
+    </nav>
+  </footer>
+
+
+<deepl-input-controller translate="no"><template shadowrootmode="open"><link rel="stylesheet" href="chrome-extension://cofdbpoegempjloogbagkncekinflcnj/build/content.css"><div dir="ltr" style="visibility: initial !important;"><div class="dl-input-translation-container svelte-95aucy"><div></div></div></div></template></deepl-input-controller><div class="bpm-float-07mm"><button class="bpm-button-07mm" data-content="Tap"></button><button class="bpm-close-07mm"></button></div></body></html>

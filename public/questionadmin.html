@@ -6,10 +6,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-    <title>Document</title>
+    <title>Вопрос пользователя</title>
     <style>
     body {
-      font-family: Arial, sans-serif;
+
+  font-family: "Montserrat", sans-serif;
       max-width: 800px;
       margin: 40px auto;
       background: #f9f9f9;
@@ -20,6 +21,7 @@
 
     h1, h2 {
       color: #333;
+  font-family: "Montserrat", sans-serif;
     }
 
     #question {
@@ -39,17 +41,22 @@
 
     .answer b {
       color: #2c3e50;
+  font-family: "Montserrat", sans-serif;
     }
 
     form textarea {
-      width: 780px;
-      height: 100px;
-      padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      resize: vertical;
-      font-family: inherit;
+      width: 100%;
+  max-width: 100%;
+  min-width: 100%;
+  height: 100px;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  resize: vertical;
+  font-family: "Montserrat", sans-serif;
+  box-sizing: border-box;
+      
     }
 
     button {
@@ -60,6 +67,7 @@
       border-radius: 8px;
       font-size: 16px;
       cursor: pointer;
+      font-family: "Montserrat", sans-serif;
     }
 
     button:hover {
@@ -70,7 +78,7 @@
       color: red;
       margin-top: 10px;
     }
-footer{
+   footer{
    display: flex;
     list-style: none;
   /* Добавим цвет и ширину блока для наглядности*/
@@ -97,7 +105,27 @@ footer{
 .footer-menu > li > a:hover{
   background: #d4d4d4;
   border-radius: 10px;
+}   
+
+
+@media screen and (max-width: 600px){
+
+footer {
+    justify-content: center;
+  }
+
+  .footer-menu {
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+  }
+
+  .footer-menu > li > a {
+    padding: 10px 0;
+    text-align: center;
+  }
 }
+
   </style>
 </head>
 <body>
@@ -106,6 +134,7 @@ footer{
    
 
 
+</form>
 <hr>
 <div id="answers"></div>
  <footer>
@@ -141,13 +170,14 @@ async function loadPage() {
     document.getElementById('deleteBtn').style.display = 'inline-block';
   }
 
-  const answersHTML = data.answers.map(a => {
-    const canDelete = currentUser && currentUser.isAdmin;
-    return `<div class="answer" data-answer-id="${a.id}">
-              <b>${a.username}</b>: ${a.answer}
-              ${canDelete ? `<button class="deleteAnswerBtn" data-id="${a.id}">Удалить</button>` : ''}
-            </div>`;
-  }).join('');
+ const answersHTML = data.answers.map(a => {
+  const canDelete = currentUser && currentUser.isAdmin;
+  const isAdminAnswer = a.is_admin; // Предположим, что API возвращает is_admin: true/false
+  return `<div class="answer" data-answer-id="${a.id}">
+            <b>${a.username}${isAdminAnswer ? ' <span style="color: #e74c3c; font-weight: normal;">(администратор)</span>' : ''}</b>: ${a.answer}
+            ${canDelete ? `<button class="deleteAnswerBtn" data-id="${a.id}">Удалить</button>` : ''}
+          </div>`;
+}).join('');
 
   document.getElementById('answers').innerHTML = answersHTML;
 

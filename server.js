@@ -460,14 +460,14 @@ app.get('/api/forum/questions/:id', (req, res) => {
             JOIN users u ON q.user_id = u.id
             WHERE q.id = ?`, [questionId], (err, question) => {
         if (err) return res.status(500).json({ error: err.message });
-        if (!question) return res.status(404).json({ error: "Question not found" });
+        if (!question) return res.status(404).json({ error: "Вопросы не найдены" });
+db.all(`SELECT a.*, u.username, u.is_admin FROM forum_answers a
+        JOIN users u ON a.user_id = u.id
+        WHERE a.question_id = ? ORDER BY a.created_at`, [questionId], (err2, answers) => {
+    if (err2) return res.status(500).json({ error: err2.message });
 
-        db.all(`SELECT a.*, u.username FROM forum_answers a
-                JOIN users u ON a.user_id = u.id
-                WHERE a.question_id = ? ORDER BY a.created_at`, [questionId], (err2, answers) => {
-            if (err2) return res.status(500).json({ error: err2.message });
-            res.json({ question, answers });
-        });
+    res.json({ question, answers });
+});
     });
 });
 
