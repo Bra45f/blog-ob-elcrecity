@@ -34,9 +34,33 @@
   <label><input type="checkbox" name="tags" value="Другое"> Другое</label><br>
 </fieldset>
     <button type="submit">Задать вопрос</button>
-  </form>
-  
+  </form>  
   <h2>Список вопросов</h2>
+
+<div class="filter-section">
+  <h3>Поиск</h3>
+  <input type="text" id="searchTitle" placeholder="Поиск">
+
+  <div class="tag-toggle-header">
+    <h3>Темы</h3>
+    <img src="IMG-TEST/plus-icon.png" id="toggleTagsBtn" alt="Показать темы" class="tag-toggle-icon" />
+  </div>
+
+  <div id="tagFilters" class="tag-filters">
+    <label><input type="checkbox" value="Вопрос"> Вопрос</label>
+    <label><input type="checkbox" value="Обсуждение"> Обсуждение</label>
+    <label><input type="checkbox" value="Фото"> Фото</label>
+    <label><input type="checkbox" value="Другое"> Другое</label>
+  </div>
+
+  <button onclick="applyFilters()">Применить</button>
+  <button onclick="resetFilters()">Сбросить</button>
+</div>
+
+
+
+
+
   <div id="questions"></div>
    <h1 class="new_blogs" id="faq">Частые вопросы  <img src="IMG-TEST/free-icon-font-interrogation-3916718.png" title="Нажмите на вопрос, чтобы узнать ответ" style="width:20px;"></h1>
 
@@ -103,6 +127,17 @@
     </nav>
   </footer>
   <script>
+const toggleTagsBtn = document.getElementById('toggleTagsBtn');
+  const tagFilters = document.getElementById('tagFilters');
+
+  toggleTagsBtn.addEventListener('click', () => {
+    const isExpanded = tagFilters.classList.contains('expanded');
+    tagFilters.classList.toggle('expanded', !isExpanded);
+    tagFilters.classList.toggle('collapsed', isExpanded);
+
+    toggleTagsBtn.src = isExpanded ? 'IMG-TEST/plus-icon.png' : 'IMG-TEST/minus-icon.png';
+  });
+
     document.getElementById("questionForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   const form = e.target;
@@ -138,6 +173,49 @@
         `).join('');
         document.getElementById('questions').innerHTML = list;
       });
+
+      let allQuestions = []; // сюда сохраним все вопросы
+
+fetch('/api/forum/questions')
+  .then(res => res.json())
+  .then(data => {
+    allQuestions = data;
+    renderQuestions(allQuestions);
+  });
+
+function renderQuestions(questions) {
+  const list = questions.map(q => `
+    <div class="question-card">
+      <h3><a href="question.html?id=${q.id}">${q.title}</a></h3>
+      <p>${q.description}</p>
+      <p>Темы: ${q.tags}</p>
+    </div>
+  `).join('');
+  document.getElementById('questions').innerHTML = list;
+}
+
+function applyFilters() {
+  const titleFilter = document.getElementById("searchTitle").value.trim().toLowerCase();
+  const selectedTags = Array.from(document.querySelectorAll('#tagFilters input:checked')).map(cb => cb.value);
+
+  const filtered = allQuestions.filter(q => {
+    const matchesTitle = q.title.toLowerCase().includes(titleFilter);
+    const questionTags = q.tags ? q.tags.split(',') : [];
+
+    const matchesTags = selectedTags.length === 0 || selectedTags.some(tag => questionTags.includes(tag));
+    return matchesTitle && matchesTags;
+  });
+
+  renderQuestions(filtered);
+}
+
+function resetFilters() {
+  document.getElementById("searchTitle").value = "";
+  const checkboxes = document.querySelectorAll('#tagFilters input[type="checkbox"]');
+  checkboxes.forEach(cb => cb.checked = false);
+  renderQuestions(allQuestions); // Показываем все вопросы
+}
+
   </script>
 
 </body>

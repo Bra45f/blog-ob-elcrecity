@@ -315,6 +315,148 @@ footer{
   accent-color: #4CAF50;
 }
 
+.tag-toggle-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tag-toggle-icon {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  display: none; /* по умолчанию скрыта */
+}
+
+#tagFilters.collapsed {
+  display: none;
+}
+
+#tagFilters.expanded {
+  display: block;
+}
+
+
+/* Общий стиль фильтрации */
+.filter-section {
+  margin: 20px 0;
+  padding: 16px;
+  border-radius: 12px;
+  font-family: 'Montserrat', sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  
+}
+
+.filter-section h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+#searchTitle {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#tagFilters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+#tagFilters label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  background-color: #eef2f7;
+  padding: 6px 10px;
+  border-radius: 20px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.filter-section button {
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background-color: #4CAF50;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  width: 300px;
+  transition: background-color 0.3s;
+}
+
+.filter-section button:hover {
+  background-color: #2e7d32;
+}
+
+
 @media (max-width: 767px) {
+  .filter-section {
+    padding: 14px;
+  }
+
+
+  #tagFilters label {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .filter-section button {
+    margin-top: 5px;
+    width: 100%;
+  }
+
+.filter-toggle-icon {
+    display: block;
+  }
+
+  #filterSection {
+    display: none;
+    flex-direction: column;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  #filterSection.show {
+    display: flex;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scaleY(0.95); }
+    to { opacity: 1; transform: scaleY(1); }
+  }
+
+  .tag-toggle-icon {
+    display: inline; 
+  }
+
+  #tagFilters {
+    display: none;
+  }
+
+  #tagFilters.expanded {
+    display: block;
+  }
+
+  #tagFilters label {
+    display: block;          
+    margin-bottom: 12px;     
+    font-size: 16px;         
+    line-height: 1.4;        
+  }
+
+  #tagFilters input[type="checkbox"] {
+    margin-right: 8px;       
+    transform: scale(1.2);   
+    vertical-align: middle;  
+  }
 
 }
