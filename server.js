@@ -16,13 +16,12 @@ const port = 3000;
 
 
 
-
+app.use(express.json()); 
 app.set('view engine', 'ejs');
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
-app.use(express.json()); 
 app.use(session({ secret: 'adminsecret secret-key', resave: false, saveUninitialized: true }));
 
 // Указываем Express, где искать статические файлы
@@ -47,7 +46,7 @@ const tables = [
     email TEXT UNIQUE,
     username TEXT UNIQUE,
     password TEXT
-  )`,
+)`,
   `CREATE TABLE IF NOT EXISTS blogs (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT,
@@ -242,8 +241,32 @@ app.delete('/api/admin/:id', (req, res) => {
 });
 // Регистрация
 app.post('/api/register', (req, res) => {
-    const { username, password } = req.body;
-    db.run('INSERT INTO users (username, password) VALUES (?, ?)', [username, password], function(err) {
+    const { email, username, password } = req.body;
+
+    // Проверки
+    if (!email || !username || !password) {
+        return res.status(400).json({ success: false, message: 'Все поля обязательны' });
+    }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+     const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/;
+    if (!emailPattern.test(email)) {
+        return res.status(400).json({ success: false, message: 'Некорректный email' });
+    }
+
+    if (username.length < 3) {
+        return res.status(400).json({ success: false, message: 'Имя пользователя слишком короткое' });
+    }
+
+    if (password.length < 6) {
+        return res.status(400).json({ success: false, message: 'Пароль слишком короткий' });
+    }
+
+    if (!passwordPattern.test(password)) {
+        return res.status(400).json({ success: false, message: 'Пароль слишком простой. Используйте заглавные, строчные буквы, цифры и спецсимволы.' });
+    }
+
+    db.run(`INSERT INTO users (email, username, password) VALUES (?, ?, ?)`, [email, username, password], function(err) {
         if (err) return res.json({ success: false, message: 'Ошибка регистрации' });
         res.json({ success: true, message: 'Новый пользователь зарегистрирован' });
     });
@@ -251,15 +274,25 @@ app.post('/api/register', (req, res) => {
 
 // Вход
 app.post('/api/login', (req, res) => {
-    const { username, password } = req.body;
-    db.get('SELECT id, username FROM users WHERE username = ? AND password = ?', [username, password], (err, user) => {
-    if (err || !user) return res.json({ success: false, message: 'Неверные учетные данные' });
-    req.session.user = user;
-    req.session.userId = user.id;
-    req.session.username = user.username;
-    req.session.isAdmin = user.isAdmin; 
-    res.json({ success: true, message: 'Добро пожаловать!' });
-});
+    const { login, password } = req.body; // login — это либо email, либо username
+
+    db.get(
+        `SELECT id, username FROM users 
+         WHERE (username = ? OR email = ?) AND password = ?`,
+        [login, login, password],
+        (err, user) => {
+            if (err || !user) {
+                return res.json({ success: false, message: 'Неверные учетные данные' });
+            }
+
+            req.session.user = user;
+            req.session.userId = user.id;
+            req.session.username = user.username;
+            req.session.isAdmin = user.isAdmin;
+
+            res.json({ success: true, message: 'Добро пожаловать!' });
+        }
+    );
 });
 
 // Проверка сессии
