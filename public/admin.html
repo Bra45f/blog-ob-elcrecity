@@ -8,6 +8,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="adminstyle.css">
+  <!-- Quill stylesheet -->
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<!-- Quill script -->
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
   <script src="admin.js" defer></script>
 </head>
 <body>
@@ -26,7 +30,7 @@
   <h1>Добавить блог</h1>
   <input id="title" placeholder="Заголовок"><br>
   <textarea id="description" placeholder="Краткое описание"></textarea><br>
-  <textarea id="content" placeholder="Полный текст"></textarea><br>
+ <div id="editor" style="height: 300px;"></div><br>
   <button class="addbtm" onclick="addBlog()">Добавить</button></div>
 
   <h2>Все блоги</h2> <div id="editModal" style="display:none;  background: #fff;
@@ -36,7 +40,7 @@
     <h3>Редактировать блог</h3>
     <input id="editTitle"><br>
     <textarea id="editDescription"></textarea><br>
-    <textarea id="editContent"></textarea><br>
+    <div id="editEditor" style="height: 300px;"></div>
     <button onclick="saveEdit()">Сохранить</button>
     <button onclick="closeEdit()">Отмена</button>
   </div> 

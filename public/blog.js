@@ -14,7 +14,7 @@ async function loadBlog() {
     <p><b>Дата создания:</b> ${formattedDate}</p>
       <h1>${blog.title}</h1>
       <p><i>${blog.description}</i></p>
-      <div class="text">${blog.content}</div>
+      <div class="formatted-content">${blog.content}</div>
       <h2>Рейтинг</h2>
   <div class="rating">
     <input type="hidden" id="star1_hidden" value="1">
