@@ -8,11 +8,25 @@ const fs = require('fs');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const multer = require('multer');
-const upload = multer({ dest: 'uploads/' });
 const sanitizeHtml = require('sanitize-html'); 
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/'); // Папка для сохранения
+  },
+  filename: (req, file, cb) => {
+    // Уникальное имя: текущая дата + оригинальное имя
+    const uniqueSuffix = Date.now() + '-' + file.originalname;
+    cb(null, uniqueSuffix);
+  }
+});
+
+const upload = multer({ storage: storage });
 
 const app = express();
 const port = 3000;
+
+// Хранилище файлов
 
 
 
@@ -30,7 +44,6 @@ app.use(express.static(path.join(__dirname, 'views')));
 ['register', 'login', 'profile', 'comments', 'admin', 'forum'].forEach(route => {
   app.get(`/${route}`, (req, res) => res.sendFile(path.join(__dirname, `public/${route}.html`)));
 });
-
 
 
 // Подключаем БД
@@ -53,7 +66,7 @@ const tables = [
     description TEXT,
     content TEXT,
     author TEXT,
-    created_at TEXT
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
   )`,
   `CREATE TABLE IF NOT EXISTS comments (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -516,22 +529,38 @@ app.get('/api/forum/questions/:id', (req, res) => {
   });
 });
 
-app.post('/api/forum/questions', upload.none(), async (req, res) => {
+app.post('/api/forum/questions', upload.single('image'), async (req, res) => {
   const { title, description } = req.body;
-  const tags = JSON.parse(req.body.selectedTags || '[]'); // ← распарсим строки в массив
+  const tags = JSON.parse(req.body.selectedTags || '[]');
 
   if (!req.session.user) return res.status(401).send("Unauthorized");
 
-  const db = new sqlite3.Database('ratings.db'); 
+  const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
 
-  await db.run(
-    `INSERT INTO forum_questions (title, description, tags, user_id, created_at)
-     VALUES (?, ?, ?, ?, datetime('now'))`,
-    [title, description, tags.join(','), req.session.user.id]
-  );
+  const db = new sqlite3.Database('ratings.db');
 
-  res.status(200).send("OK");
+  try {
+    await new Promise((resolve, reject) => {
+      db.run(
+        `INSERT INTO forum_questions (title, description, tags, image, user_id, created_at)
+         VALUES (?, ?, ?, ?, ?, datetime('now'))`,
+        [title, description, tags.join(','), imagePath, req.session.user.id],
+        function (err) {
+          if (err) reject(err);
+          else resolve();
+        }
+      );
+    });
+
+    res.status(200).send("OK");
+  } catch (err) {
+    console.error("Ошибка при добавлении вопроса:", err);
+    res.status(500).send("Ошибка при добавлении вопроса");
+  } finally {
+    db.close();
+  }
 });
+
 
 
 
@@ -701,7 +730,7 @@ app.delete('/api/admin/forum/answers/:id', (req, res) => {
 
 
 app.get('/api/blogs', (req, res) => {
-  db.all('SELECT * FROM blogs', (err, rows) => {
+  db.all('SELECT * FROM blogs ORDER BY datetime(created_at) DESC', (err, rows) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(rows);
   });

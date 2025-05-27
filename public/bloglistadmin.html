@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="blstyle.css">
 </head>
 <body>
+  <main>
   <nav>
     <input type="checkbox" id="btn-menu" />
     <label for="btn-menu"></label>
@@ -20,8 +21,11 @@
     </ul>
   </nav>
   <h1>Блоги</h1>
+  <div style="text-align: center; margin-bottom: 20px;">
+  <input type="text" id="searchInput" placeholder="Поиск по заголовку или описанию..." style="padding: 10px; width: 80%; max-width: 400px; font-size: 16px;">
+</div>
   <div id="blog-list"></div>
-
+  </main>
 
 <footer>
   <nav>
@@ -34,23 +38,25 @@
   </nav>
 </footer>
   <script>
-    document.addEventListener('DOMContentLoaded', async () => {
-      const res = await fetch('/api/blogs');
-      const blogs = await res.json();
-     
-       
-      blogs.forEach(blog => {
-        const card = document.createElement('div'); 
-        const container = document.getElementById('blog-list');
-          const date = new Date(blog.created_at);
+     document.addEventListener('DOMContentLoaded', async () => {
+    const res = await fetch('/api/blogs');
+    const blogs = await res.json();
+    const container = document.getElementById('blog-list');
+    const searchInput = document.getElementById('searchInput');
+
+    function renderBlogs(filteredBlogs) {
+      container.innerHTML = '';
+      filteredBlogs.forEach(blog => {
+        const card = document.createElement('div');
+        const date = new Date(blog.created_at);
         const formattedDate = date.toLocaleDateString('ru-RU', {
-    day: '2-digit',
-    month: 'long',
-    year: 'numeric'
-  });
-        card.className = 'blog-card'; // Добавляем класс для стилизации
+          day: '2-digit',
+          month: 'long',
+          year: 'numeric'
+        });
+        card.className = 'blog-card';
         card.innerHTML = `
-        <p><b>Дата создания:</b> ${formattedDate}</p>
+          <p><b>Дата создания:</b> ${formattedDate}</p>
           <h2 class="blog-title">${blog.title}</h2>
           <p class="blog-description"><i>${blog.description}</i></p>
           <p><b>Автор:</b> ${blog.author || 'неизвестен'}</p>
@@ -58,7 +64,21 @@
         `;
         container.appendChild(card);
       });
+    }
+
+    // Отобразить все блоги при загрузке
+    renderBlogs(blogs);
+
+    // Фильтрация при вводе в поиск
+    searchInput.addEventListener('input', () => {
+      const query = searchInput.value.toLowerCase();
+      const filtered = blogs.filter(blog =>
+        blog.title.toLowerCase().includes(query) ||
+        blog.description.toLowerCase().includes(query)
+      );
+      renderBlogs(filtered);
     });
+  });
   </script>
 </body>
 </html>

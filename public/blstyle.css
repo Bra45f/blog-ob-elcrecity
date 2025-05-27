@@ -1,3 +1,18 @@
+/* Сделаем всю страницу flex-контейнером */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Контейнер, который будет растягиваться */
+main {
+  flex: 1;
+}
+
+
 *{
     padding: 0;
     margin: 0;

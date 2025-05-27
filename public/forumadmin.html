@@ -10,7 +10,8 @@
     <title>Форум</title>
 </head>
 <body>
-  <div class="page-container">
+  <main>
+  <class="page-container">
      <nav>
         <input type="checkbox" id="btn-menu" />
         <label for="btn-menu"></label>
@@ -23,7 +24,27 @@
 
 
   <h2 style="margin-left: 30px;">Список вопросов</h2>
+<div class="filter-section">
+  <h3>Поиск</h3>
+  <input type="text" id="searchTitle" placeholder="Поиск">
+
+  <div class="tag-toggle-header">
+    <h3>Темы</h3>
+    <img src="IMG-TEST/plus-icon.png" id="toggleTagsBtn" alt="Показать темы" class="tag-toggle-icon" />
+  </div>
+
+  <div id="tagFilters" class="tag-filters">
+    <label><input type="checkbox" value="Вопрос"> Вопрос</label>
+    <label><input type="checkbox" value="Обсуждение"> Обсуждение</label>
+    <label><input type="checkbox" value="Фото"> Фото</label>
+    <label><input type="checkbox" value="Другое"> Другое</label>
+  </div>
+
+  <button onclick="applyFilters()">Применить</button>
+  <button onclick="resetFilters()">Сбросить</button>
+</div>
   <div id="questions"></div>
+</main>
  <footer>
     <nav>
       <ul class="footer-menu">
@@ -36,19 +57,62 @@
   </footer>
   </div>
   <script>
+let allQuestions = []; // Глобальная переменная для хранения всех вопросов
 
-    fetch('/api/forum/questions')
-      .then(res => res.json())
-      .then(data => {
-        const list = data.map(q => `
-          <div class="question-card">
-            <h3><a href="questionadmin.html?id=${q.id}">${q.title}</a></h3>
-            <p>${q.description}</p>
-            <p>Темы: ${q.tags}</p>
-          </div>
-        `).join('');
-        document.getElementById('questions').innerHTML = list;
-      });
+// Переключение отображения фильтров по тегам
+const toggleTagsBtn = document.getElementById('toggleTagsBtn');
+const tagFilters = document.getElementById('tagFilters');
+
+toggleTagsBtn.addEventListener('click', () => {
+  const isExpanded = tagFilters.classList.contains('expanded');
+  tagFilters.classList.toggle('expanded', !isExpanded);
+  tagFilters.classList.toggle('collapsed', isExpanded);
+
+  toggleTagsBtn.src = isExpanded ? 'IMG-TEST/plus-icon.png' : 'IMG-TEST/minus-icon.png';
+});
+
+// Функция отображения списка вопросов
+function renderQuestions(questions) {
+  const list = questions.map(q => `
+    <div class="question-card">
+      <h3><a href="questionadmin.html?id=${q.id}">${q.title}</a></h3>
+      <p>${q.description}</p>
+      <p>Темы: ${q.tags}</p>
+    </div>
+  `).join('');
+  document.getElementById('questions').innerHTML = list;
+}
+
+// Применение фильтров
+function applyFilters() {
+  const titleFilter = document.getElementById("searchTitle").value.trim().toLowerCase();
+  const selectedTags = Array.from(document.querySelectorAll('#tagFilters input:checked')).map(cb => cb.value);
+
+  const filtered = allQuestions.filter(q => {
+    const matchesTitle = q.title.toLowerCase().includes(titleFilter);
+    const questionTags = q.tags ? q.tags.split(',') : [];
+    const matchesTags = selectedTags.length === 0 || selectedTags.some(tag => questionTags.includes(tag));
+    return matchesTitle && matchesTags;
+  });
+
+  renderQuestions(filtered); // Показываем отфильтрованные вопросы
+}
+
+// Сброс фильтров
+function resetFilters() {
+  document.getElementById("searchTitle").value = "";
+  const checkboxes = document.querySelectorAll('#tagFilters input[type="checkbox"]');
+  checkboxes.forEach(cb => cb.checked = false);
+  renderQuestions(allQuestions); // Показываем все вопросы
+}
+
+// Загрузка всех вопросов при загрузке страницы
+fetch('/api/forum/questions')
+  .then(res => res.json())
+  .then(data => {
+    allQuestions = data; // Сохраняем в глобальную переменную
+    renderQuestions(allQuestions); // Отображаем всё
+  });
   </script>
 
 </body>
