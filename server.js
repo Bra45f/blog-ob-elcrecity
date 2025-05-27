@@ -192,6 +192,7 @@ app.post('/api/admin/login', (req, res) => {
     (err, row) => {
       if (err || !row) return res.status(401).json({ message: 'Неверные данные' });
       req.session.admin = { id: row.id, username: row.username, isAdmin: true };
+  
       res.json({ message: 'Успешный вход' });
     });
 });

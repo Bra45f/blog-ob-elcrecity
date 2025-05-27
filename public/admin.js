@@ -90,7 +90,6 @@ async function fetchBlogs() {
       <p><b>Дата создания:</b> ${formattedDate}</p>
       <h4 style="color: #333; margin-top: 0; margin-bottom: 10px;">${blog.title}</h4>
       <p style="color: #666; margin-bottom: 15px;"><b>Описание:</b> ${blog.description || ''}</p>
-      <p><b>Автор:</b> ${blog.author || 'неизвестен'}</p>
       <button class="nondelbtm" onclick="openBlog(${blog.id})">Открыть</button>
       <button class="nondelbtm" onclick="openEditFromId(${blog.id})">Изменить</button>
       <button class="delbtm" onclick="deleteBlog(${blog.id})">Удалить</button>

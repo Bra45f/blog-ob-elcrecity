@@ -196,7 +196,10 @@
 }
 
 .preomushestva{
-  width: 100%;
+  display: flex;
+  justify-content: center; /* по центру по горизонтали */
+  align-items: center;      /* по центру по вертикали (если есть высота) */
+  flex-wrap: wrap;          /* перенос на новую строку, если не влезает */
 }
 
 
@@ -308,6 +311,14 @@
   grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
   gap: 20px;
   padding: 20px;
+}
+
+.blog-list1{
+  width: 100%;
+  
+  
+  display: flex;
+  flex-direction: column;
 }
 
 /* Стили для карточки блога */
