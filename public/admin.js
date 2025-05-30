@@ -104,6 +104,12 @@ async function addBlog() {
   const description = document.getElementById('description').value;
   const content = quill.root.innerHTML;
 
+  const contentSize = new Blob([JSON.stringify({ title, content, description })]).size;
+  if (contentSize > 10 * 800 * 800) { // 15MB лимит
+    alert("Слишком большое изображение! Используйте фото меньшего размера.");
+    return;
+  }
+  
   await fetch('/api/blogs', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

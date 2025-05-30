@@ -84,7 +84,8 @@
     transform: translateY(-5px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   }
-  
+
+
   .blog-link:hover {
     text-decoration: underline;
   }
@@ -287,6 +288,13 @@ background-color: #555;
     margin-left: 30px;
     font-family: "Montserrat", sans-serif;
 
+}
+
+.formatted-content img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 10px auto;
 }
 
 @media screen and (max-width: 600px){

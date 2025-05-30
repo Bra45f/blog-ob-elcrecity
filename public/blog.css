@@ -51,7 +51,9 @@ body {
 p{
    font-family: "Montserrat", sans-serif;
 }
-
+img{
+  width: 100%;
+}
     button {
       padding: 10px 20px;
       background-color: #0066cc;
