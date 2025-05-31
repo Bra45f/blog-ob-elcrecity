@@ -52,6 +52,13 @@ p{
    font-family: "Montserrat", sans-serif;
 }
 
+  .formatted-content img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 10px auto;
+  }
+
     button {
       padding: 10px 20px;
       background-color: #0066cc;
