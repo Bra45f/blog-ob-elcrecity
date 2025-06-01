@@ -195,9 +195,6 @@ fetch('/api/session' , { credentials: 'include' })
     const q = data.question;
 
     // Админ или автор вопроса — может удалить вопрос
-    if (currentUser && (currentUser.id === q.user_id || currentUser.isAdmin)) {
-      document.getElementById('deleteBtn').style.display = 'inline-block';
-    }
 
     const answersHTML = data.answers.map(a => {
       const canDelete = currentUser && currentUser.isAdmin;
@@ -225,19 +222,7 @@ document.getElementById('answerForm').addEventListener('submit', async (e) => {
 });
 
 // Удаление вопроса
-document.getElementById('deleteBtn').addEventListener('click', async () => {
-  if (confirm('Вы точно хотите удалить этот вопрос?')) {
-    const res = await fetch(`/api/forum/questions/${id}`, {
-      method: 'DELETE'
-    });
-    if (res.ok) {
-      alert("Вопрос удалён");
-      window.location.href = 'forum.html';
-    } else {
-      alert("Ошибка удаления");
-    }
-  }
-});
+
 if (currentUser && currentUser.isAdmin) {
     const deleteBtn = document.createElement('button');
     deleteBtn.textContent = 'Удалить';

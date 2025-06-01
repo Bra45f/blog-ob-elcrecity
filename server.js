@@ -162,7 +162,7 @@ app.post('/api/admin/register', (req, res) => {
       const mailOptions = {
         from: 'nikitaskavrenuk6@gmail.com',
         to: email,
-        subject: 'Данные вашего администратора',
+        subject: 'Ваши регистрационные данные',
         text: 'Во вложении находятся данные вашего администратора.',
         attachments: [
           {
