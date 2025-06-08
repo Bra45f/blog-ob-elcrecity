@@ -8,7 +8,8 @@ const fs = require('fs');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const multer = require('multer');
-const sanitizeHtml = require('sanitize-html'); 
+const sanitizeHtml = require('sanitize-html');
+const rateLimit = require("express-rate-limit");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -19,6 +20,14 @@ const storage = multer.diskStorage({
     const uniqueSuffix = Date.now() + '-' + file.originalname;
     cb(null, uniqueSuffix);
   }
+});
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 минут
+  max: 100, // максимум 100 запросов с одного IP
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: "Слишком много запросов. Повторите позже."
 });
 
 const upload = multer({ storage: storage });
@@ -38,8 +47,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.use(session({ secret: 'adminsecret secret-key', resave: false, saveUninitialized: true }));
+app.use(limiter);
 
-// Указываем Express, где искать статические файлы
 app.use(express.static(path.join(__dirname, 'views')));
 
 ['register', 'login', 'profile', 'comments', 'admin', 'forum'].forEach(route => {
