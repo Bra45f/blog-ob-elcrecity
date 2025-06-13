@@ -766,7 +766,7 @@ app.post('/api/blogs', (req, res) => {
   );
 });
 
-// Оценка блога
+// Оценка блогаччё
 app.post('/api/blogs/:id/ratings', (req, res) => {
   if (!req.session.userId) {
       return res.status(401).json({ error: 'Not authenticated' });
@@ -784,7 +784,6 @@ app.post('/api/blogs/:id/ratings', (req, res) => {
       }
   });
 });
-
 
 // Получение средней оценки
 app.get('/api/blogs/:id/average_rating', (req, res) => {
