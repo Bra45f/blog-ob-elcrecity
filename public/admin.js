@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Проверка сессии администратора
   const res = await fetch('/api/admin/session');
   const data = await res.json();
+ 
 
   if (!data.loggedIn) {
     window.location.href = 'loginadmin.html';
@@ -66,7 +67,8 @@ const blogContents = {}; // Хранилище контента по ID
 async function fetchBlogs() {
   const res = await fetch('/api/blogs');
   const blogs = await res.json();
-  const container = document.getElementById('blogs');
+  const container = document.getElementById('blogs'); 
+  const searchInput = document.getElementById('searchInput');
   container.innerHTML = '';
 
   blogs.forEach(blog => {
@@ -76,7 +78,9 @@ async function fetchBlogs() {
       description: blog.description,
       content: blog.content
     };
-
+    function renderBlogs(filteredBlogs) {
+       container.innerHTML = '';
+      filteredBlogs.forEach(blog => {
     const div = document.createElement('div');
     const date = new Date(blog.created_at);
     const formattedDate = date.toLocaleDateString('ru-RU', {
@@ -84,7 +88,6 @@ async function fetchBlogs() {
       month: 'long',
       year: 'numeric'
     });
-
     div.className = 'blog-card';
     div.innerHTML = `
       <p><b>Дата создания:</b> ${formattedDate}</p>
@@ -95,8 +98,22 @@ async function fetchBlogs() {
       <button class="delbtm" onclick="deleteBlog(${blog.id})">Удалить</button>
     `;
     container.appendChild(div);
-  });
-}
+    });
+  }
+    // Отобразить все блоги при загрузке
+    renderBlogs(blogs);
+
+     // Фильтрация при вводе в поиск
+    searchInput.addEventListener('input', () => {
+      const query = searchInput.value.toLowerCase();
+      const filtered = blogs.filter(blog =>
+        blog.title.toLowerCase().includes(query) ||
+        blog.description.toLowerCase().includes(query)
+      );
+      renderBlogs(filtered);
+    });
+});
+};
 
 // Добавление блога
 async function addBlog() {
