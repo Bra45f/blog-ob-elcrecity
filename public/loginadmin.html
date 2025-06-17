@@ -21,8 +21,8 @@
   <h1>Вход</h1>
     <form id="loginForm">
         <input type="text" name="username" placeholder="Логин" required />
-        <input type="password" name="password" placeholder="Пароль" required />
-        <input type="text" name="secret_key" placeholder="Секретный ключ" required />
+        <input type="password" name="password" id="password" placeholder="Пароль" required />
+        <input type="text" name="secret_key" placeholder="Секретный ключ" required /><button class="arc" type="button" id="togglePassword" style="margin-bottom: 5px;" >Показать</button>
         <button type="submit">Войти</button>
       </form>
       </div>
@@ -37,6 +37,20 @@
   </nav>
 </footer>
       <script>
+document.getElementById('togglePassword').addEventListener('click', () => {
+  const passwordField = document.getElementById('password');
+  const toggleButton = document.getElementById('togglePassword');
+  
+  if (passwordField.type === 'password') {
+    passwordField.type = 'text';
+    toggleButton.textContent = 'Скрыть';
+  } else {
+    passwordField.type = 'password';
+    toggleButton.textContent = 'Показать';
+  }
+});
+
+
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
           e.preventDefault();
           const formData = new FormData(e.target);

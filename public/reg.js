@@ -1,3 +1,16 @@
+document.getElementById('togglePassword').addEventListener('click', () => {
+  const passwordField = document.getElementById('password');
+  const toggleButton = document.getElementById('togglePassword');
+  
+  if (passwordField.type === 'password') {
+    passwordField.type = 'text';
+    toggleButton.textContent = 'Скрыть';
+  } else {
+    passwordField.type = 'password';
+    toggleButton.textContent = 'Показать';
+  }
+});
+
 async function register() {
     const email = document.getElementById('email').value.trim();
     const username = document.getElementById('username').value.trim();
