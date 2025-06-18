@@ -9,7 +9,7 @@ const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const multer = require('multer');
 const sanitizeHtml = require('sanitize-html');
-const rateLimit = require("express-rate-limit");
+// const rateLimit = require("express-rate-limit");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -22,13 +22,13 @@ const storage = multer.diskStorage({
   }
 });
 
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 минут
-  max: 100, // максимум 100 запросов с одного IP
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: "Слишком много запросов. Повторите позже."
-});
+// const limiter = rateLimit({
+//   windowMs: 15 * 60 * 1000, // 15 минут
+//   max: 100, // максимум 100 запросов с одного IP
+//   standardHeaders: true,
+//   legacyHeaders: false,
+//   message: "Слишком много запросов. Повторите позже."
+// });
 
 const upload = multer({ storage: storage });
 
