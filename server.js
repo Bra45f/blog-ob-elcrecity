@@ -47,7 +47,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.use(session({ secret: 'adminsecret secret-key', resave: false, saveUninitialized: true }));
-app.use(limiter);
+// app.use(limiter);
 
 app.use(express.static(path.join(__dirname, 'views')));
 
